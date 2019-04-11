@@ -528,7 +528,6 @@ GameObject:
   - component: {fileID: 583560916}
   - component: {fileID: 583560921}
   - component: {fileID: 583560922}
-  - component: {fileID: 583560923}
   m_Layer: 0
   m_Name: Chicken
   m_TagString: Untagged
@@ -618,7 +617,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 583560915}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.5, y: 0.25, z: -7.5}
+  m_LocalPosition: {x: 7.49, y: 0.25, z: -8.18}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 0}
@@ -636,6 +635,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07f9153f0a1831d4ea503e9bf1da4146, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  anim: {fileID: 0}
 --- !u!95 &583560922
 Animator:
   serializedVersion: 3
@@ -655,22 +655,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!111 &583560923
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 583560915}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 44cd84950f066ed42ba2b5fd72f804ea, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: 44cd84950f066ed42ba2b5fd72f804ea, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 0
-  m_AnimatePhysics: 0
-  m_CullingType: 0
 --- !u!1 &1112760610
 GameObject:
   m_ObjectHideFlags: 0

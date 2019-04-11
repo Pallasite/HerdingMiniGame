@@ -11,10 +11,14 @@ public class Chicken_Script : MonoBehaviour
     void Start()
     {
         anim = GetComponent<Animator>();
+        chicken = GetComponent<Rigidbody>();
 
+        chicken.useGravity = true;
+        chicken.isKinematic = false;
         //maybe randomize this a little bit later?
-        Vector3 start_position = new Vector3(7.5f, 0.25f, -7.5f);
-        this.gameObject.transform.position = start_position;
+        //Vector3 start_position = new Vector3(7.5f, 0.25f, -7.5f);
+        //this.gameObject.transform.position = start_position;
+
     }
 
     // Update is called once per frame
@@ -29,8 +33,8 @@ public class Chicken_Script : MonoBehaviour
 
         if (other.gameObject.name == "Ramp")
         {
-           anim.Play("Climb_Up_Ramp");
-           Destroy(this.gameObject);
+           anim.Play("Walk_Up_Ramp");
+           //Destroy(this.gameObject);
         }
     }
 }
