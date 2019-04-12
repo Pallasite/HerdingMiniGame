@@ -15,6 +15,7 @@ public class Chicken_Script : MonoBehaviour
 
         chicken.useGravity = true;
         chicken.isKinematic = false;
+        
         //maybe randomize this a little bit later?
         //Vector3 start_position = new Vector3(7.5f, 0.25f, -7.5f);
         //this.gameObject.transform.position = start_position;
@@ -29,12 +30,10 @@ public class Chicken_Script : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(" " + other.name);
-
         if (other.gameObject.name == "Ramp")
         {
            anim.Play("Walk_Up_Ramp");
-           //Destroy(this.gameObject);
+           Destroy(this.gameObject);
         }
     }
 }
