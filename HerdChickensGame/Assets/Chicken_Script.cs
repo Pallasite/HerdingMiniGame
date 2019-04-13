@@ -33,12 +33,14 @@ public class Chicken_Script : MonoBehaviour
         
         if (other.gameObject.name == "Ramp")
         {
-            //anim.Play("Walk_Up_Ramp");
-            Debug.Log("climbing");
+            //plays the animation that allows the chicken to walk up the ramp
             anim.Play("Walk_Up_Ramp");
 
+            /*
+             * destroys the chicken after 0.75 seconds, which is approx. the length of the animation,
+             * this creates the illusion that the chicken enters the henhouse
+             */
             Destroy(this.gameObject, 0.75f);
-            Debug.Log("this collider: " + other.gameObject.name);
         }
     }
 }
