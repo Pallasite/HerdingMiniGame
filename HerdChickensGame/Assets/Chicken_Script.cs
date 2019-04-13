@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class Chicken_Script : MonoBehaviour
 {
-    public Animator anim;
+    private Animation anim;
     private Rigidbody chicken;
 
     // Start is called before the first frame update
     void Start()
-    {
-        anim = GetComponent<Animator>();
+    { 
         chicken = GetComponent<Rigidbody>();
+        anim = gameObject.GetComponent<Animation>();
 
         chicken.useGravity = true;
         chicken.isKinematic = false;
@@ -30,10 +30,13 @@ public class Chicken_Script : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
+        
         if (other.gameObject.name == "Ramp")
         {
-           anim.Play("Walk_Up_Ramp");
-           Destroy(this.gameObject);
+            //anim.Play("Walk_Up_Ramp");
+            Debug.Log("climbing");
+            anim.Play("Second_Test_Anim");
+            Debug.Log("this collider: " + other.gameObject.name);
         }
     }
 }
