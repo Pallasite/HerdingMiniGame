@@ -35,7 +35,9 @@ public class Chicken_Script : MonoBehaviour
         {
             //anim.Play("Walk_Up_Ramp");
             Debug.Log("climbing");
-            anim.Play("Second_Test_Anim");
+            anim.Play("Walk_Up_Ramp");
+
+            Destroy(this.gameObject, 0.75f);
             Debug.Log("this collider: " + other.gameObject.name);
         }
     }
