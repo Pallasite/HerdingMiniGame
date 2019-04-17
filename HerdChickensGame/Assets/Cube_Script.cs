@@ -41,6 +41,7 @@ public class Cube_Script : MonoBehaviour
             position.z -= 0.15f;
             this.transform.position = position;
         }
+        
 
         cubePosition = position;
     }
