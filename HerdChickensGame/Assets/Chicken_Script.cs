@@ -8,6 +8,8 @@ public class Chicken_Script : MonoBehaviour
     private Rigidbody chicken;
     //used later to restrict track jumps
     public int track_two_jump;
+    public float start_time;
+    public float total_time;
 
     // Start is called before the first frame update
     void Start()
@@ -18,6 +20,8 @@ public class Chicken_Script : MonoBehaviour
 
         chicken.useGravity = true;
         chicken.isKinematic = false;
+
+        //start_time = Time.time;
 
         //Randomly decides which track the chicken will start on
         int rand_track = Random.Range(0, 1);
@@ -35,7 +39,7 @@ public class Chicken_Script : MonoBehaviour
         }
 
         Vector3 start_position = new Vector3(-4.5f, 2.5f, track_z);
-        chicken.transform.position = start_position;
+        //chicken.transform.position = start_position;
 
         //forces chicken to start on "track" in front of the henhouse
         chicken.constraints = RigidbodyConstraints.FreezePositionZ;
@@ -73,31 +77,44 @@ public class Chicken_Script : MonoBehaviour
     void Update()
     {
         /*
-        if(chicken.position.y > 6.0f)
+         * Until the player is moved by the kinect, the a set animation plays on the chickens to make
+         * them seem startled and jumping around, but they will never enter the henhouse until
+         * the player starts moving around
+         * 
+         * On that trigger, set the start time to the time, so the elapsed time is time - start time, 
+         * if that exceeds 3 minutes play the fox animation
+         */ 
+        /*
+         * if two minutes have passed and the chickens are still not in the henhouse, a 
+         * fox comes from the left of the screen and scares them back into the henhouse
+         * 
+         * this action would essesntially stop gameplay and freeze the position of the
+         * player as the chickens make their way back into the henhouse
+         */
+        if(Time.time > 180.0) //times out in two minutes
         {
-            float curx = chicken.position.x;
-            float curz = chicken.position.z;
-            chicken.transform.position = new Vector3(curx, 3.5f, curz);
-        }
-        */
 
+        }
+
+        //if chicken goes too far on the right of the screen
         if (chicken.position.x > 8.0f)
         {
             anim.Play("Jump_To_The_Left");
         }
-       
-        else if(chicken.position.x < -5.5f)
+        //if chicken goes too far on the left of the screen
+        else if(chicken.position.x < -8.0f)
         {
-            anim.Play("Jump_To_The_Right");
+            //track one
+            if (chicken.position.z == -3.0f)
+            {
+                anim.Play("Jump_To_The_Right_T1");
+            }
+            //track two
+            else if (chicken.position.z == -5.0f)
+            {
+                anim.Play("Jump_To_The_Right_T2");
+            }
         }
-
-
-        /*
-         * keep track of the time, if the clock exceeded a certain
-         * amount of time (maybe like 2 minutes?), then all of the chickens will
-         * enter the henhouse again because an animation of a fox will enter
-         * the screen and scare them back in, thus ending the game
-         */
 
         /*
          * chickens randomly move between track one and track two, and only when they
@@ -111,13 +128,10 @@ public class Chicken_Script : MonoBehaviour
          * track two: along the line z = -5
          */
 
-        //keeps track of the times a chicken jumps from track one to two, ensures it doesn't do it
-        //more than once
-
-        //ensures the chicken is in the correct jump zone x range and is currently in a bounce (y is small)
+        //ensures the chicken is in the correct "jump zone" x range and is currently at the bottom of a bounce (y is small)
         if (chicken.position.x > -1.0f && chicken.position.x < 1.0f && chicken.position.y < 1.0f) {
-            int jump_condition = Random.Range(1, 10);
-            float cur_x = chicken.position.x;
+            int jump_condition = Random.Range(1, 10); //random number used to determine whether a chicken jumps or not
+            float cur_x = chicken.position.x; //the chickens current x position doesn't change
 
             //the chicken is currently on track one
             Debug.Log(track_two_jump);
