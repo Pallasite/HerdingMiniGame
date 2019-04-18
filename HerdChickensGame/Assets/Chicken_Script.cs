@@ -81,6 +81,17 @@ public class Chicken_Script : MonoBehaviour
         }
         */
 
+        if (chicken.position.x > 8.0f)
+        {
+            anim.Play("Jump_To_The_Left");
+        }
+       
+        else if(chicken.position.x < -5.5f)
+        {
+            anim.Play("Jump_To_The_Right");
+        }
+
+
         /*
          * keep track of the time, if the clock exceeded a certain
          * amount of time (maybe like 2 minutes?), then all of the chickens will
@@ -101,7 +112,7 @@ public class Chicken_Script : MonoBehaviour
          */
 
         //keeps track of the times a chicken jumps from track one to two, ensures it doesn't do it
-        //more than 2 times
+        //more than once
 
         //ensures the chicken is in the correct jump zone x range and is currently in a bounce (y is small)
         if (chicken.position.x > -1.0f && chicken.position.x < 1.0f && chicken.position.y < 1.0f) {
@@ -110,7 +121,7 @@ public class Chicken_Script : MonoBehaviour
 
             //the chicken is currently on track one
             Debug.Log(track_two_jump);
-            if(chicken.position.z == -3.0f && track_two_jump < 2 && jump_condition <= 1) { //jumps to track two 10% of the time
+            if(chicken.position.z == -3.0f && track_two_jump < 1 && jump_condition <= 1) { //jumps to track two 10% of the time
                 //jump to track two
                 anim.Play("Jump_To_Track_Two"); //animation should end in the air somewhat to allow for bounce
                 Vector3 new_position = new Vector3(cur_x, 2.5f, -5.0f);
@@ -130,11 +141,13 @@ public class Chicken_Script : MonoBehaviour
 
     public void OnCollisionEnter(Collision collision)
     {
+        Debug.Log("collides");
         /*
          * if the user pushes the chicken too far to the right, it jumps high over
          * the user to the left
          */
-        if(chicken.position.x > 5.0f && collision.gameObject.name == "Player")
+         /*
+        if(chicken.position.x > 5.0f  && collision.gameObject.name == "Player")
         {
             anim.Play("Jump_To_The_Left");
         }
@@ -142,12 +155,14 @@ public class Chicken_Script : MonoBehaviour
         /*
          * if the user pushes the chicken too far to the left, it jumps high over
          * the user to the right
-         */
+         
         else if(chicken.position.x < -5.5f && collision.gameObject.name == "Player")
         {
-            Debug.Log("lalalalalal");
             anim.Play("Jump_To_The_Right");
         }
+        */
+       
+        
     }
 
     /*
