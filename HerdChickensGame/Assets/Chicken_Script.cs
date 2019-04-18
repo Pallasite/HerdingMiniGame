@@ -6,12 +6,15 @@ public class Chicken_Script : MonoBehaviour
 {
     private Animation anim;
     private Rigidbody chicken;
+    //used later to restrict track jumps
+    public int track_two_jump;
 
     // Start is called before the first frame update
     void Start()
     { 
         chicken = GetComponent<Rigidbody>();
         anim = gameObject.GetComponent<Animation>();
+        track_two_jump = 0;
 
         chicken.useGravity = true;
         chicken.isKinematic = false;
@@ -44,21 +47,40 @@ public class Chicken_Script : MonoBehaviour
          * there are always forces acting on the chickens to subtly move them across the screen, if
          * the chicken's position gets too far to the right, the force moves it to the left, and vice
          * versa
-         */ 
-        if(chicken.position.x > 5.0f)
-        {
-            chicken.AddForce(-0.3f, 0.0f, 0.0f);
-        }
+         */
 
-        if (chicken.position.x < -5.5f)
+        //track one, so it's always moving towards the ramp
+        if (chicken.position.z == -3.0f)
         {
             chicken.AddForce(0.3f, 0.0f, 0.0f);
+        }
+
+        //track two
+        else if (chicken.position.z == -5.0f) {
+            if (chicken.position.x > 5.0f)
+            {
+                chicken.AddForce(-0.3f, 0.0f, 0.0f);
+            }
+
+            if (chicken.position.x < -5.5f)
+            {
+                chicken.AddForce(0.3f, 0.0f, 0.0f);
+            }
         }
     }
 
     // Update is called once per frame
     void Update()
     {
+        /*
+        if(chicken.position.y > 6.0f)
+        {
+            float curx = chicken.position.x;
+            float curz = chicken.position.z;
+            chicken.transform.position = new Vector3(curx, 3.5f, curz);
+        }
+        */
+
         /*
          * keep track of the time, if the clock exceeded a certain
          * amount of time (maybe like 2 minutes?), then all of the chickens will
@@ -78,20 +100,25 @@ public class Chicken_Script : MonoBehaviour
          * track two: along the line z = -5
          */
 
+        //keeps track of the times a chicken jumps from track one to two, ensures it doesn't do it
+        //more than 2 times
+
         //ensures the chicken is in the correct jump zone x range and is currently in a bounce (y is small)
-        if (chicken.position.x > -1.5f && chicken.position.x < 1.5f && chicken.position.y < 1.0f) {
+        if (chicken.position.x > -1.0f && chicken.position.x < 1.0f && chicken.position.y < 1.0f) {
             int jump_condition = Random.Range(1, 10);
             float cur_x = chicken.position.x;
 
             //the chicken is currently on track one
-            if(chicken.position.z == -3.0f && jump_condition <= 1) { //jumps to track two 10% of the time
+            Debug.Log(track_two_jump);
+            if(chicken.position.z == -3.0f && track_two_jump < 2 && jump_condition <= 1) { //jumps to track two 10% of the time
                 //jump to track two
                 anim.Play("Jump_To_Track_Two"); //animation should end in the air somewhat to allow for bounce
                 Vector3 new_position = new Vector3(cur_x, 2.5f, -5.0f);
                 chicken.transform.position = new_position;
+                track_two_jump++; 
             }
             //the chicken is currently on track two
-            else if(chicken.position.z == -5.0f && jump_condition <= 1) { //jumps to track one 10% of the time
+            else if(chicken.position.z == -5.0f && jump_condition <= 7) { //jumps to track one 70% of the time
                 //jump to track one
                 anim.Play("Jump_To_Track_One"); //animation should end in the air somewhat to allow for bounce
                 Vector3 new_position = new Vector3(cur_x, 2.5f, -3.0f);
@@ -109,7 +136,7 @@ public class Chicken_Script : MonoBehaviour
          */
         if(chicken.position.x > 5.0f && collision.gameObject.name == "Player")
         {
-            //anim.Play("Jump_To_The_Left");
+            anim.Play("Jump_To_The_Left");
         }
 
         /*
@@ -118,7 +145,8 @@ public class Chicken_Script : MonoBehaviour
          */
         else if(chicken.position.x < -5.5f && collision.gameObject.name == "Player")
         {
-            //anim.Play("Jump_To_The_Right");
+            Debug.Log("lalalalalal");
+            anim.Play("Jump_To_The_Right");
         }
     }
 
