@@ -29,6 +29,8 @@ public class Cube_Script : MonoBehaviour
             position.x += 0.15f;
             this.transform.position = position;
         }
+
+        /*
         if (Input.GetKey(KeyCode.UpArrow))
         {
             //Vector3 position = this.transform.position;
@@ -41,6 +43,8 @@ public class Cube_Script : MonoBehaviour
             position.z -= 0.15f;
             this.transform.position = position;
         }
+        */
+        
 
         cubePosition = position;
     }
