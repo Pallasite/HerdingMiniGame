@@ -280,7 +280,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 222733914}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.36, y: 1.5, z: -3.7}
+  m_LocalPosition: {x: -5.46, y: 1.5, z: -3.7}
   m_LocalScale: {x: 1, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 0}
@@ -509,7 +509,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 583560915}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.5, y: 2.5, z: -5}
+  m_LocalPosition: {x: -1.55, y: 0.19, z: -3.45}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 0}
@@ -528,6 +528,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   track_two_jump: 0
+  start_time: 0
+  total_time: 0
 --- !u!95 &583560922
 Animator:
   serializedVersion: 3
@@ -560,11 +562,11 @@ Animation:
   m_Animations:
   - {fileID: 7400000, guid: 62903d78066e2494f849ccfcc8f124de, type: 2}
   - {fileID: 7400000, guid: bcadc0b05027c704cae2f74c2ec52ff4, type: 2}
-  - {fileID: 7400000, guid: 825c9cf4d0c2d334caa6d9d4be3f4caa, type: 2}
-  - {fileID: 7400000, guid: 332ed2115c56e8e469ad7a27407992cd, type: 2}
-  - {fileID: 7400000, guid: f7652c2ade2b72447a7b1a7eba07c6af, type: 2}
-  - {fileID: 7400000, guid: 358220e9eb3c53d47977fe0d179cb039, type: 2}
-  - {fileID: 7400000, guid: 132140a3d43c6e441a37ed6cea74efef, type: 2}
+  - {fileID: 7400000, guid: aee7231b0a8bf6946889485c2cd80e91, type: 2}
+  - {fileID: 7400000, guid: f784beb326698ad45b078e8505c9b7c2, type: 2}
+  - {fileID: 7400000, guid: ca66ca814ef1d0240af07588ef4ce4ea, type: 2}
+  - {fileID: 7400000, guid: a51ee69afd2f33343848e693115d0cc5, type: 2}
+  - {fileID: 7400000, guid: 441c654cb4a8d5d4aa755ecf3ea6a0ab, type: 2}
   m_WrapMode: 1
   m_PlayAutomatically: 0
   m_AnimatePhysics: 1

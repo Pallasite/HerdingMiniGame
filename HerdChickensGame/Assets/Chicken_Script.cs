@@ -38,8 +38,8 @@ public class Chicken_Script : MonoBehaviour
             track_z = -5.0f;
         }
 
-        Vector3 start_position = new Vector3(-4.5f, 2.5f, track_z);
-        //chicken.transform.position = start_position;
+        Vector3 start_position = new Vector3(-4.5f, 2.5f, -5.0f); //FIXME: made it always start track 2
+        chicken.transform.position = start_position;
 
         //forces chicken to start on "track" in front of the henhouse
         chicken.constraints = RigidbodyConstraints.FreezePositionZ;
@@ -96,23 +96,44 @@ public class Chicken_Script : MonoBehaviour
 
         }
 
-        //if chicken goes too far on the right of the screen
-        if (chicken.position.x > 8.0f)
+        //if chicken goes too far on the right of the screen and it's on track two
+        if (chicken.position.x > 4.8f && chicken.position.z == -5.0f)
         {
-            anim.Play("Jump_To_The_Left");
+            anim.Play("JL_T2_to_T1");
         }
         //if chicken goes too far on the left of the screen
-        else if(chicken.position.x < -8.0f)
+        else if(chicken.position.x < -7.5f)
         {
-            //track one
+            int switch_num = Random.Range(0, 2);
+            
+            //chicken currently on track one
             if (chicken.position.z == -3.0f)
             {
-                anim.Play("Jump_To_The_Right_T1");
+                if (switch_num < 2) //66% of the time
+                {
+                    //stay on track one
+                    anim.Play("JR_T1_to_T1");
+                }
+                else //33% of the time
+                {
+                    //switch to track two
+                    anim.Play("JR_T1_to_T2");
+                }
             }
-            //track two
+
+            //chicken currently on track two
             else if (chicken.position.z == -5.0f)
             {
-                anim.Play("Jump_To_The_Right_T2");
+                if (switch_num < 2) //66% of the time
+                {
+                    //switch to track one
+                    anim.Play("JR_T2_to_T1");
+                }
+                else //33% of the time
+                {
+                    //stay on track two
+                    anim.Play("JR_T2_to_T2");
+                }
             }
         }
 
@@ -128,6 +149,7 @@ public class Chicken_Script : MonoBehaviour
          * track two: along the line z = -5
          */
 
+        /*
         //ensures the chicken is in the correct "jump zone" x range and is currently at the bottom of a bounce (y is small)
         if (chicken.position.x > -1.0f && chicken.position.x < 1.0f && chicken.position.y < 1.0f) {
             int jump_condition = Random.Range(1, 10); //random number used to determine whether a chicken jumps or not
@@ -150,7 +172,7 @@ public class Chicken_Script : MonoBehaviour
                 chicken.transform.position = new_position;
             }
         }
-        
+        */
     }
 
     public void OnCollisionEnter(Collision collision)
@@ -204,6 +226,7 @@ public class Chicken_Script : MonoBehaviour
                 //chicken will enter henhouse
                 //anim["Walk_Up_Ramp].speed = rand_speed;
                 anim.Play("Walk_Into_Henhouse");
+                Debug.Log("destroyed!");
                 Destroy(this.gameObject, 1.7f); //have to alter destroy time based on rand_speed
                 
                 //play an animation of the girl jumping up and down once
