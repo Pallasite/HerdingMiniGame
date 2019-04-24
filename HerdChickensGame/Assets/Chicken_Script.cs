@@ -5,6 +5,7 @@ using UnityEngine;
 public class Chicken_Script : MonoBehaviour
 {
     public Animation anim;
+    public Animation girl_anim;
     public Rigidbody chicken;
     //used later to restrict track jumps
     public int track_two_jump;
@@ -13,21 +14,29 @@ public class Chicken_Script : MonoBehaviour
     public float bounce_time;
 
     public Rigidbody player;
-    public Rigidbody girl;
+    public GameObject girl;
     public Player_Script player_script;
+    public Girl_Script girl_script;
 
 
     // Start is called before the first frame update
     void Start()
     {
         player_script = player.GetComponent<Player_Script>(); //reference to the script for the player
+        girl_script = girl.GetComponent<Girl_Script>();
+
         chicken = GetComponent<Rigidbody>();
         anim = gameObject.GetComponent<Animation>();
+        girl_anim = girl.GetComponent<Animation>(); 
         track_two_jump = 0;
 
         chicken.useGravity = true;
         chicken.isKinematic = false;
         //chicken.mass = 5.0f;
+
+        //PhysicsMaterial2D bounce = this.GetComponent<PhysicsMaterial2D>();
+
+        //Debug.Log("bounciness: " + bounce.bounciness);
 
         //Randomly chooses Y position
         float rand_y = Random.Range(0.5f, 3.5f);
@@ -85,6 +94,12 @@ public class Chicken_Script : MonoBehaviour
 
     public void FixedUpdate()
     {
+       
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         /*
          * there are always forces acting on the chickens to subtly move them across the screen, if
          * the chicken's position gets too far to the right, the force moves it to the left, and vice
@@ -92,31 +107,29 @@ public class Chicken_Script : MonoBehaviour
          */
 
         //only have these forces acting if the player is in motion
-        if (!player.IsSleeping()) {
+        if (!player.IsSleeping())
+        {
             //track one, so it's always moving toward the ramp
             if (chicken.position.z == -3.0f)
             {
-                chicken.AddForce(0.4f, 0.0f, 0.0f);
+                chicken.AddForce(0.3f, 0.0f, 0.0f);
             }
 
             //track two
-            else if (chicken.position.z == -5.0f) {
+            else if (chicken.position.z == -5.0f)
+            {
                 if (chicken.position.x > 5.0f)
                 {
-                    chicken.AddForce(-0.4f, 0.0f, 0.0f);
+                    chicken.AddForce(-0.3f, 0.0f, 0.0f);
                 }
 
                 if (chicken.position.x < -5.5f)
                 {
-                    chicken.AddForce(0.4f, 0.0f, 0.0f);
+                    chicken.AddForce(0.3f, 0.0f, 0.0f);
                 }
             }
         }
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
         /*
          * if two minutes have passed and the chickens are still not in the henhouse, a 
          * fox comes from the left of the screen and scares them back into the henhouse
@@ -198,9 +211,10 @@ public class Chicken_Script : MonoBehaviour
             else { //70% of the time
                 //chicken will enter henhouse
                 anim.Play("Walk_Into_Henhouse");
-                Debug.Log("destroyed!");
                 Destroy(this.gameObject, 1.7f); //have to alter destroy time based on rand_speed
-                //play animation of girl jumping
+                Debug.Log("should jump!");
+                girl_anim["Girl_Happy_Jump"].speed = 2.5f;
+                girl_anim.Play("Girl_Happy_Jump");
             }
         }
     }
