@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Chicken_Script : MonoBehaviour
 {
-    private Animation anim;
-    private Rigidbody chicken;
+    public Animation anim;
+    public Rigidbody chicken;
     //used later to restrict track jumps
     public int track_two_jump;
     public float start_time;
@@ -13,13 +13,14 @@ public class Chicken_Script : MonoBehaviour
     public float bounce_time;
 
     public Rigidbody player;
-    public Cube_Script cube_script;
+    public Rigidbody girl;
+    public Player_Script player_script;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        cube_script = player.GetComponent<Cube_Script>();
+        player_script = player.GetComponent<Player_Script>(); //reference to the script for the player
         chicken = GetComponent<Rigidbody>();
         anim = gameObject.GetComponent<Animation>();
         track_two_jump = 0;
@@ -89,25 +90,25 @@ public class Chicken_Script : MonoBehaviour
          * the chicken's position gets too far to the right, the force moves it to the left, and vice
          * versa
          */
-        //track one, so it's always moving towards the ramp
 
-        //only have these forces acting IF the player is in motion
+        //only have these forces acting if the player is in motion
         if (!player.IsSleeping()) {
+            //track one, so it's always moving toward the ramp
             if (chicken.position.z == -3.0f)
             {
-                chicken.AddForce(0.5f, 0.0f, 0.0f);
+                chicken.AddForce(0.4f, 0.0f, 0.0f);
             }
 
             //track two
             else if (chicken.position.z == -5.0f) {
                 if (chicken.position.x > 5.0f)
                 {
-                    chicken.AddForce(-0.5f, 0.0f, 0.0f);
+                    chicken.AddForce(-0.4f, 0.0f, 0.0f);
                 }
 
                 if (chicken.position.x < -5.5f)
                 {
-                    chicken.AddForce(0.5f, 0.0f, 0.0f);
+                    chicken.AddForce(0.4f, 0.0f, 0.0f);
                 }
             }
         }
@@ -116,32 +117,6 @@ public class Chicken_Script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*
-        Debug.Log("bounce time: " + bounce_time);
-        Debug.Log("time: " + Time.time);
-
-        if(chicken.position.y < 0.5f && bounce_time > 100.0f) {
-            float cur_x = chicken.position.x;
-            float cur_z = chicken.position.z;
-
-            Vector3 bounce_up_loc = new Vector3(cur_x, 1.5f, cur_z);
-            Vector3 velocity = new Vector3(0.0f, 50.0f, 0.0f);
-
-            chicken.transform.position = Vector3.SmoothDamp(chicken.position, bounce_up_loc, ref velocity, 0.8f);
-            bounce_time = 0;
-        } else {
-            bounce_time++;
-        }
-        */
-
-        /*
-         * Until the player is moved by the kinect, the a set animation plays on the chickens to make
-         * them seem startled and jumping around, but they will never enter the henhouse until
-         * the player starts moving around
-         * 
-         * On that trigger, set the start time to the time, so the elapsed time is time - start time, 
-         * if that exceeds 3 minutes play the fox animation
-         */
         /*
          * if two minutes have passed and the chickens are still not in the henhouse, a 
          * fox comes from the left of the screen and scares them back into the henhouse
@@ -153,6 +128,18 @@ public class Chicken_Script : MonoBehaviour
         {
 
         }
+
+        /*
+         * chickens randomly move between track one and track two, and only when they
+         * are on track one are they aligned properly to move into the henhouse
+         * 
+         * for the view of the user, the tracks are the same, since their view is "2D", 
+         * so it simply appears that the chickens sometimes are pushed right past the ramp
+         * and sometimes they walk up it
+         * 
+         * track one: along the line z = -3
+         * track two: along the line z = -5
+         */
 
         //if chicken goes too far on the right of the screen and it's on track two
         if (chicken.position.x > 4.8f && chicken.position.z == -5.0f)
@@ -194,101 +181,26 @@ public class Chicken_Script : MonoBehaviour
                 }
             }
         }
-
-        /*
-         * chickens randomly move between track one and track two, and only when they
-         * are on track one are they aligned properly to move into the henhouse
-         * 
-         * for the view of the user, the tracks are the same, since their view is "2D", 
-         * so it simply appears that the chickens sometimes are pushed right past the ramp
-         * and sometimes they walk up it
-         * 
-         * track one: along the line z = -3
-         * track two: along the line z = -5
-         */
-
-        /*
-        //ensures the chicken is in the correct "jump zone" x range and is currently at the bottom of a bounce (y is small)
-        if (chicken.position.x > -1.0f && chicken.position.x < 1.0f && chicken.position.y < 1.0f) {
-            int jump_condition = Random.Range(1, 10); //random number used to determine whether a chicken jumps or not
-            float cur_x = chicken.position.x; //the chickens current x position doesn't change
-
-            //the chicken is currently on track one
-            Debug.Log(track_two_jump);
-            if(chicken.position.z == -3.0f && track_two_jump < 1 && jump_condition <= 1) { //jumps to track two 10% of the time
-                //jump to track two
-                anim.Play("Jump_To_Track_Two"); //animation should end in the air somewhat to allow for bounce
-                Vector3 new_position = new Vector3(cur_x, 2.5f, -5.0f);
-                chicken.transform.position = new_position;
-                track_two_jump++; 
-            }
-            //the chicken is currently on track two
-            else if(chicken.position.z == -5.0f && jump_condition <= 7) { //jumps to track one 70% of the time
-                //jump to track one
-                anim.Play("Jump_To_Track_One"); //animation should end in the air somewhat to allow for bounce
-                Vector3 new_position = new Vector3(cur_x, 2.5f, -3.0f);
-                chicken.transform.position = new_position;
-            }
-        }
-        */
     }
-
-    public void OnCollisionEnter(Collision collision)
-    {
-        Debug.Log("collides");
-        /*
-         * if the user pushes the chicken too far to the right, it jumps high over
-         * the user to the left
-         */
-         /*
-        if(chicken.position.x > 5.0f  && collision.gameObject.name == "Player")
-        {
-            anim.Play("Jump_To_The_Left");
-        }
-
-        /*
-         * if the user pushes the chicken too far to the left, it jumps high over
-         * the user to the right
-         
-        else if(chicken.position.x < -5.5f && collision.gameObject.name == "Player")
-        {
-            anim.Play("Jump_To_The_Right");
-        }
-        */
-       
-        
-    }
-
-    /*
-     * need to alter this method so that it's not that it gets triggered by the 
-     * ramp but that it gets triggered by being on the correct "track" because of the
-     * 2D nature of the movement of the player
-     */
+    
     public void OnTriggerEnter(Collider other)
     {
         //random number generator for int numbers 1 (inclusive) to 10 (inclusive) for the jump/enter (10 numbers)
         int rand_enter_num = Random.Range(1, 10);
 
-        //random number generator for float numbers for speed of walk (0.0 to 1.0f ??)
-        //float rand_speed = Random.Range(0.0f, 2.0f);
-
         if (other.gameObject.name == "Ramp")
         {
             if(rand_enter_num <= 3) { //30% of the time
                 //chicken will jump off
-                //anim["Jump_Test"].speed = 0.5f;
                 anim.Play("Walk_Then_Jump");
-                //go back onto track two
 
-            } else { //70% of the time
+            }
+            else { //70% of the time
                 //chicken will enter henhouse
-                //anim["Walk_Up_Ramp].speed = rand_speed;
                 anim.Play("Walk_Into_Henhouse");
                 Debug.Log("destroyed!");
                 Destroy(this.gameObject, 1.7f); //have to alter destroy time based on rand_speed
-                
-                //play an animation of the girl jumping up and down once
-                //to signal she's happy
+                //play animation of girl jumping
             }
         }
     }
