@@ -10,35 +10,72 @@ public class Chicken_Script : MonoBehaviour
     public int track_two_jump;
     public float start_time;
     public float total_time;
+    public float bounce_time;
+
+    public Rigidbody player;
+    public Cube_Script cube_script;
+
 
     // Start is called before the first frame update
     void Start()
-    { 
+    {
+        cube_script = player.GetComponent<Cube_Script>();
         chicken = GetComponent<Rigidbody>();
         anim = gameObject.GetComponent<Animation>();
         track_two_jump = 0;
 
         chicken.useGravity = true;
         chicken.isKinematic = false;
+        //chicken.mass = 5.0f;
 
-        //start_time = Time.time;
+        //Randomly chooses Y position
+        float rand_y = Random.Range(0.5f, 3.5f);
 
-        //Randomly decides which track the chicken will start on
-        int rand_track = Random.Range(0, 1);
-        float track_z;
+        //Initializes the start position to all zeroes before being replaced
+        Vector3 start_position = new Vector3(0.0f, 0.0f, 0.0f);
 
-        if(rand_track == 0) //50% of the time
+        if (this.name == "Chicken_0")
         {
-            //track one is chosen
-            track_z = -3.0f;    
+            start_position = new Vector3(-4.15f, rand_y, -5.0f);
         }
-        else //50% of the time
+        else if (this.name == "Chicken_1")
         {
-            //track two is chosen
-            track_z = -5.0f;
+            start_position = new Vector3(-3.29f, rand_y, -3.0f);
+        }
+        else if (this.name == "Chicken_2")
+        {
+            start_position = new Vector3(-1.8f, rand_y, -5.0f);
+        }
+        else if (this.name == "Chicken_3")
+        {
+            start_position = new Vector3(0.0f, rand_y, -3.0f);
+        }
+        else if (this.name == "Chicken_4")
+        {
+            start_position = new Vector3(1.3f, rand_y, -5.0f);
+        }
+        else if (this.name == "Chicken_5")
+        {
+            start_position = new Vector3(-2.8f, rand_y, -5.0f);
+        }
+        else if (this.name == "Chicken_6")
+        {
+            start_position = new Vector3(-0.9f, rand_y, -5.0f);
+        }
+        else if (this.name == "Chicken_7")
+        {
+            start_position = new Vector3(-1.2f, rand_y, -3.0f);
+        }
+        else if (this.name == "Chicken_8")
+        {
+            start_position = new Vector3(-3.9f, rand_y, -3.0f);
+        }
+        else if (this.name == "Chicken_9")
+        {
+            start_position = new Vector3(0.3f, rand_y, -5.0f);
         }
 
-        Vector3 start_position = new Vector3(-4.5f, 2.5f, -5.0f); //FIXME: made it always start track 2
+        //sets this chicken's position to the chosen start position
         chicken.transform.position = start_position;
 
         //forces chicken to start on "track" in front of the henhouse
@@ -52,23 +89,26 @@ public class Chicken_Script : MonoBehaviour
          * the chicken's position gets too far to the right, the force moves it to the left, and vice
          * versa
          */
-
         //track one, so it's always moving towards the ramp
-        if (chicken.position.z == -3.0f)
-        {
-            chicken.AddForce(0.3f, 0.0f, 0.0f);
-        }
 
-        //track two
-        else if (chicken.position.z == -5.0f) {
-            if (chicken.position.x > 5.0f)
+        //only have these forces acting IF the player is in motion
+        if (!player.IsSleeping()) {
+            if (chicken.position.z == -3.0f)
             {
-                chicken.AddForce(-0.3f, 0.0f, 0.0f);
+                chicken.AddForce(0.5f, 0.0f, 0.0f);
             }
 
-            if (chicken.position.x < -5.5f)
-            {
-                chicken.AddForce(0.3f, 0.0f, 0.0f);
+            //track two
+            else if (chicken.position.z == -5.0f) {
+                if (chicken.position.x > 5.0f)
+                {
+                    chicken.AddForce(-0.5f, 0.0f, 0.0f);
+                }
+
+                if (chicken.position.x < -5.5f)
+                {
+                    chicken.AddForce(0.5f, 0.0f, 0.0f);
+                }
             }
         }
     }
@@ -77,13 +117,31 @@ public class Chicken_Script : MonoBehaviour
     void Update()
     {
         /*
+        Debug.Log("bounce time: " + bounce_time);
+        Debug.Log("time: " + Time.time);
+
+        if(chicken.position.y < 0.5f && bounce_time > 100.0f) {
+            float cur_x = chicken.position.x;
+            float cur_z = chicken.position.z;
+
+            Vector3 bounce_up_loc = new Vector3(cur_x, 1.5f, cur_z);
+            Vector3 velocity = new Vector3(0.0f, 50.0f, 0.0f);
+
+            chicken.transform.position = Vector3.SmoothDamp(chicken.position, bounce_up_loc, ref velocity, 0.8f);
+            bounce_time = 0;
+        } else {
+            bounce_time++;
+        }
+        */
+
+        /*
          * Until the player is moved by the kinect, the a set animation plays on the chickens to make
          * them seem startled and jumping around, but they will never enter the henhouse until
          * the player starts moving around
          * 
          * On that trigger, set the start time to the time, so the elapsed time is time - start time, 
          * if that exceeds 3 minutes play the fox animation
-         */ 
+         */
         /*
          * if two minutes have passed and the chickens are still not in the henhouse, a 
          * fox comes from the left of the screen and scares them back into the henhouse
@@ -91,7 +149,7 @@ public class Chicken_Script : MonoBehaviour
          * this action would essesntially stop gameplay and freeze the position of the
          * player as the chickens make their way back into the henhouse
          */
-        if(Time.time > 180.0) //times out in two minutes
+        if (Time.time > 180.0) //times out in two minutes
         {
 
         }

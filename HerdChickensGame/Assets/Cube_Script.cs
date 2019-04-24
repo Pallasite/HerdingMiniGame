@@ -4,18 +4,19 @@ using UnityEngine;
 
 public class Cube_Script : MonoBehaviour
 {
-    private Rigidbody rb;
-    private Vector3 cubePosition;
+    public Rigidbody player;
+    public Vector3 cubePosition;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        rb.useGravity = false;
-        rb.isKinematic = true;
+        player = GetComponent<Rigidbody>();
+        player.useGravity = false;
+        player.isKinematic = true;
     }
 
     private void Update()
     {
+
         Vector3 position = this.transform.position;
 
         if (Input.GetKey(KeyCode.LeftArrow))
