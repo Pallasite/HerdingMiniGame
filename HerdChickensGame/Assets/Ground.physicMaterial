@@ -6,9 +6,9 @@ PhysicMaterial:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Chicken_Physics
+  m_Name: Ground
   dynamicFriction: 0.6
   staticFriction: 0.6
-  bounciness: 0.9805824
-  frictionCombine: 1
+  bounciness: 0.9
+  frictionCombine: 0
   bounceCombine: 3
