@@ -12,6 +12,7 @@ public class Chicken_Script : MonoBehaviour
     public GameObject girl;
 
     public int num_chickens;
+    public float max_velocity;
 
     public Player_Script player_script;
     public Girl_Script girl_script;
@@ -31,7 +32,8 @@ public class Chicken_Script : MonoBehaviour
 
         chicken.useGravity = true;
         chicken.isKinematic = false;
-        //chicken.mass = ??
+        max_velocity = 10.0f;
+        //chicken.mass = 1000;
 
         //randomly chooses Y position
         float rand_y = Random.Range(0.5f, 3.5f);
@@ -102,15 +104,21 @@ public class Chicken_Script : MonoBehaviour
         }
 
         //sets this chicken's position to the chosen start position
-        chicken.transform.position = start_position;
+        //chicken.transform.position = start_position;
 
         //forces chicken to start on "track" in front of the henhouse
-        chicken.constraints = RigidbodyConstraints.FreezePositionZ;
+        //chicken.constraints = RigidbodyConstraints.FreezePositionZ;
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(chicken.velocity.magnitude > max_velocity)
+        {
+            chicken.velocity = max_velocity * chicken.velocity.normalized;
+        }
+
         /*
          * there are always forces acting on the chickens to subtly move them across the screen, if
          * the chicken's position gets too far to the right, the force moves it to the left, and vice
