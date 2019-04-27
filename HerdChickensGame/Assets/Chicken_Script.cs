@@ -10,12 +10,16 @@ public class Chicken_Script : MonoBehaviour
     public Rigidbody chicken;
     public Rigidbody player;
     public GameObject girl;
-
     public int num_chickens;
+    
     public float max_velocity;
+    public bool has_collided_with_player;
+    public int num_switches;
+    public bool has_tried_to_enter;
 
     public Player_Script player_script;
     public Girl_Script girl_script;
+    public Game_Runner game_runner_script;
 
 
     // Start is called before the first frame update
@@ -23,92 +27,22 @@ public class Chicken_Script : MonoBehaviour
     {
         player_script = player.GetComponent<Player_Script>(); //reference to the script for the player
         girl_script = girl.GetComponent<Girl_Script>(); //reference to the script for the girl
+        
 
         chicken = GetComponent<Rigidbody>(); //initializes this chicken object
         anim = gameObject.GetComponent<Animation>(); //initializes the animation controller for the chickens
         girl_anim = girl.GetComponent<Animation>(); //initializes the animation controller for the girl
 
-        num_chickens = 15; //scene starts with fifteen chickens
-
         chicken.useGravity = true;
         chicken.isKinematic = false;
+
         max_velocity = 10.0f;
+        has_collided_with_player = false;
+        has_tried_to_enter = false;
+        num_switches = 0;
+        num_chickens = game_runner_script.Get_Num_Chickens();
+
         //chicken.mass = 1000;
-
-        //randomly chooses Y position
-        float rand_y = Random.Range(0.5f, 3.5f);
-
-        //initializes the start position to all zeroes before being replaced
-        Vector3 start_position = new Vector3(0.0f, 0.0f, 0.0f);
-
-        //each chicken is assigned a unique starting location based on it's name
-        if (this.name == "Chicken_0")
-        {
-            start_position = new Vector3(-4.15f, rand_y, -5.0f);
-        }
-        else if (this.name == "Chicken_1")
-        {
-            start_position = new Vector3(-3.29f, rand_y, -3.0f);
-        }
-        else if (this.name == "Chicken_2")
-        {
-            start_position = new Vector3(-1.8f, rand_y, -5.0f);
-        }
-        else if (this.name == "Chicken_3")
-        {
-            start_position = new Vector3(0.0f, rand_y, -3.0f);
-        }
-        else if (this.name == "Chicken_4")
-        {
-            start_position = new Vector3(1.3f, rand_y, -5.0f);
-        }
-        else if (this.name == "Chicken_5")
-        {
-            start_position = new Vector3(-2.8f, rand_y, -5.0f);
-        }
-        else if (this.name == "Chicken_6")
-        {
-            start_position = new Vector3(-0.9f, rand_y, -5.0f);
-        }
-        else if (this.name == "Chicken_7")
-        {
-            start_position = new Vector3(-1.2f, rand_y, -3.0f);
-        }
-        else if (this.name == "Chicken_8")
-        {
-            start_position = new Vector3(-4.1f, rand_y, -3.0f);
-        }
-        else if (this.name == "Chicken_9")
-        {
-            start_position = new Vector3(0.3f, rand_y, -5.0f);
-        }
-        else if (this.name == "Chicken_10")
-        {
-            start_position = new Vector3(-2.0f, rand_y, -3.0f);
-        }
-        else if (this.name == "Chicken_11")
-        {
-            start_position = new Vector3(2.1f, rand_y, -5.0f);
-        }
-        else if (this.name == "Chicken_12")
-        {
-            start_position = new Vector3(3.0f, rand_y, -5.0f);
-        }
-        else if (this.name == "Chicken_13")
-        {
-            start_position = new Vector3(1.2f, rand_y, -3.0f);
-        }
-        else if (this.name == "Chicken_14")
-        {
-            start_position = new Vector3(-4.8f, rand_y, -3.0f);
-        }
-
-        //sets this chicken's position to the chosen start position
-        //chicken.transform.position = start_position;
-
-        //forces chicken to start on "track" in front of the henhouse
-        //chicken.constraints = RigidbodyConstraints.FreezePositionZ;
-
     }
 
     // Update is called once per frame
@@ -127,33 +61,32 @@ public class Chicken_Script : MonoBehaviour
          * gives the actors time to explain the scene while also providing a visual of the bouncing
          * chickens.
          */
-        if (!player.IsSleeping())
+        
+        //chicken is currently on track one
+        if (chicken.position.z == -3.0f)
         {
-            //chicken is currently on track one
-            if (chicken.position.z == -3.0f)
+            //chicken is always moving to the right
+            chicken.AddForce(0.3f, 0.0f, 0.0f);
+        }
+
+        //chicken is currently on track two
+        else if (chicken.position.z == -5.0f)
+        {
+            //if chicken gets too far to the right
+            if (chicken.position.x > 5.0f)
+            {
+                //chicken is always moving to the left
+                chicken.AddForce(-0.3f, 0.0f, 0.0f);
+            }
+
+            //if chicken gets too far to the left
+            if (chicken.position.x < -5.5f)
             {
                 //chicken is always moving to the right
                 chicken.AddForce(0.3f, 0.0f, 0.0f);
             }
-
-            //chicken is currently on track two
-            else if (chicken.position.z == -5.0f)
-            {
-                //if chicken gets too far to the right
-                if (chicken.position.x > 5.0f)
-                {
-                    //chicken is always moving to the left
-                    chicken.AddForce(-0.3f, 0.0f, 0.0f);
-                }
-
-                //if chicken gets too far to the left
-                if (chicken.position.x < -5.5f)
-                {
-                    //chicken is always moving to the right
-                    chicken.AddForce(0.3f, 0.0f, 0.0f);
-                }
-            }
         }
+        
 
         /*
          * if two minutes have passed and the chickens are still not in the henhouse, a 
@@ -183,84 +116,132 @@ public class Chicken_Script : MonoBehaviour
          * track two: along the line z = -5.0f
          */
 
-        //if chicken goes too far on the right of the screen and it's on track two
-        if (chicken.position.x > 4.8f && chicken.position.z == -5.0f)
-        {
-            //jumps to the left onto track one
-            anim.Play("JL_T2_to_T1");
-        }
+        if (chicken.position.x > 4.5f || chicken.position.x < -7.5f) {
 
-        //if chicken goes too far on the left of the screen
-        else if(chicken.position.x < -7.5f)
-        {
-            //random number generator for int numbers 0 (inclusive) to 1 (inclusive) for deciding which track
-            int switch_num = Random.Range(0, 1);
-            
-            //if chicken is currently on track one
-            if (chicken.position.z == -3.0f)
+            //if chicken goes too far on the right of the screen and it's on track two
+            if (chicken.position.x > 4.5f && chicken.position.z == -5.0f)
             {
-                //50% of the time, chicken stays on track one
-                if (switch_num == 0)
-                {
-                    anim.Play("JR_T1_to_T1");
-                }
-                //50% of the time, chicken switches to track two
-                else
-                {
-                    anim.Play("JR_T1_to_T2");
-                }
+                //jumps to the left onto track one
+                //anim.Play("JL_T2_to_T1");
+                Debug.Log("bounce her to the left!");
+                chicken.AddForce(-300.0f, 500.0f, 0.0f);
             }
 
-            //if chicken is currently on track two
-            else if (chicken.position.z == -5.0f)
+            //if chicken goes too far on the left of the screen
+            else if (chicken.position.x < -7.5f)
             {
-                //50% of the time, chicken switches to track one
-                if (switch_num == 0)
+                //if chicken is currently on track one
+                if (chicken.position.z == -3.0f)
                 {
-                    anim.Play("JR_T2_to_T1");
+                    //-300
+                    Debug.Log("bounce her to the right 1!");
+                    chicken.AddForce(100.0f, 300.0f, 0.0f);
                 }
-                //50% of the time, chicken stays on track two
-                else
+
+                //if chicken is currently on track two
+                else if (chicken.position.z == -5.0f)
                 {
-                    anim.Play("JR_T2_to_T2");
+                    Debug.Log("bounce her to the right 2!");
+                    chicken.AddForce(100.0f, 300.0f, 0.0f);
                 }
             }
         }
     }
-    
-    public void OnTriggerEnter(Collider other)
+
+    public void OnCollisionEnter(Collision collision)
     {
+        if(collision.gameObject.name == "Player")
+        {
+            has_collided_with_player = true;
+        }
+
+        if(collision.gameObject.name == "Grass")
+        {
+            //makes chicken bounce in the air
+            chicken.AddForce(0.0f, 650.0f, 0.0f);
+
+            //random number generator for int numbers 0 (inclusive) to 99 (inclusive) for deciding which track
+            int switch_num = Random.Range(0, 99);
+
+            //variables for the current position
+            float cur_x = chicken.position.x;
+            float cur_y = chicken.position.y;
+            float cur_z = chicken.position.z;
+
+            //go to track one
+            if (cur_z == -5.0f && switch_num <= 50 && chicken.position.x <= 3.0f) //3.0 is where the ramp starts
+            {
+                chicken.transform.position = new Vector3(cur_x, cur_y, -3.0f);
+                num_switches++;
+            }
+
+            //go to track two
+            else if (num_chickens >= 3 && cur_z == -3.0f && num_switches <= 15 && num_chickens >= 2)
+            {
+                chicken.transform.position = new Vector3(cur_x, cur_y, -5.0f);
+                num_switches++;
+            }
+        }
+
         /*
          * if the ball touches the ramp, it will either enter the henhouse or it will jump off the side, 
          * based on the specified condition
-         */ 
-        if (other.gameObject.name == "Ramp")
+         */
+        if (collision.gameObject.name == "Ramp" && has_collided_with_player)
         {
             //random number generator for int numbers 1 (inclusive) to 10 (inclusive) for the jump/enter (10 numbers)
             int rand_enter_num = Random.Range(1, 10);
 
-            //30% of the time, chicken will jump off (if there's more than two chickens left)
-            if (rand_enter_num <= 3 && num_chickens > 2)
+            //30% of the time, chicken will jump towards the henhouse
+            if (has_tried_to_enter || rand_enter_num <= 7)
             {
-                anim.Play("Walk_Then_Jump");
+                has_tried_to_enter = true;
+                chicken.AddForce(400.0f, 165.0f, 0.0f);
+                Debug.Log("forcing it into the coop");
             }
-            //70% of the time, chicken will enter henhouse
+
+            //70% of the time, chicken will jump away from the henhouse
             else
             {
-                //plays animation and then destroys the chicken after the animation is done
-                anim.Play("Walk_Into_Henhouse");
-                Destroy(this.gameObject, 1.7f);
-                
-                //decrement the number of chickens
-                num_chickens--;
-
-                //girl jumps in background unless the animation of her jumping is already currently playing
-                girl_anim["Girl_Happy_Jump"].speed = 2.5f; 
-                if (!girl_anim.IsPlaying("Girl_Happy_Jump"))
-                {
-                    girl_anim.Play("Girl_Happy_Jump");
-                }
+                chicken.AddForce(500.0f, 200.0f, 0.0f);
             }
+        }
+
+        if(collision.gameObject.name == "Henhouse" && onTrackOne())
+        {
+            //do a random thing here, like sometimes it enters and sometimes it doesn't!! FIXME:
+            Destroy(this.gameObject);
+
+            //girl jumps in background unless the animation of her jumping is already currently playing
+            girl_anim["Girl_Happy_Jump"].speed = 2.5f;
+            if (!girl_anim.IsPlaying("Girl_Happy_Jump"))
+            {
+                girl_anim.Play("Girl_Happy_Jump");
+            }
+        }
+    }
+
+    public bool onTrackOne()
+    {
+        if(chicken.position.z == -3.0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool onTrackTwo()
+    {
+        if(chicken.position.z == -5.0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }
