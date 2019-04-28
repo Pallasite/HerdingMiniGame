@@ -10,7 +10,7 @@ public class Game_Runner : MonoBehaviour
     void Start()
     {
         GameObject g = GameObject.Find("Chicken");
-        for(int i = 0; i < num_chickens; i++)
+        for (int i = 0; i < num_chickens; i++)
         {
             GameObject c = GameObject.Instantiate(g);
             c.name = "Chicken_" + i;
@@ -20,7 +20,7 @@ public class Game_Runner : MonoBehaviour
             float z_val;
             float x_val;
 
-            if(i >= (num_chickens / 2))
+            if (i >= (num_chickens / 2))
             {
                 z_val = -3.0f;
                 x_val = Random.Range(-8.0f, 2.5f);
@@ -31,9 +31,14 @@ public class Game_Runner : MonoBehaviour
                 x_val = Random.Range(-8.0f, 5.0f);
             }
 
-            c.GetComponent<Rigidbody>().transform.position = new Vector3 (x_val, y_val, z_val);
+            c.GetComponent<Rigidbody>().transform.position = new Vector3(x_val, y_val, z_val);
             //c.GetComponent<Rigidbody>().isKinematic = true;
         }
+    }
+
+    public void Decrement_Num_Chickens()
+    {
+        num_chickens--;
     }
 
     public int Get_Num_Chickens()
@@ -44,6 +49,6 @@ public class Game_Runner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

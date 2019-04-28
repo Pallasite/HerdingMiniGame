@@ -112,6 +112,36 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &11351519 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1725443826029338, guid: daa9045249fbb4b2788c1ff712dec420,
+    type: 3}
+  m_PrefabInstance: {fileID: 1333340041}
+  m_PrefabAsset: {fileID: 0}
+--- !u!111 &11351521
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 11351519}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 0}
+  m_Animations:
+  - {fileID: 7400000, guid: faee5bb3e52bb435c8988fccfac86d95, type: 2}
+  - {fileID: 7400000, guid: 15f4e0c519468494cbd12d97e6a2d67a, type: 2}
+  - {fileID: 7400000, guid: 0c1b70a8a599c4e9aa04be457ec0b14e, type: 2}
+  - {fileID: 7400000, guid: f9b121e453fbe47479ee0ce27b43f32d, type: 2}
+  - {fileID: 7400000, guid: 603ae3c8a6c6b4c86b0f24d3b4446d29, type: 2}
+  - {fileID: 7400000, guid: d2df3728c5a864e9185828d14d081f23, type: 2}
+  - {fileID: 7400000, guid: d45f114dc6adb43dea4ee05578744c3e, type: 2}
+  - {fileID: 7400000, guid: dd2d3f99275624ec899dc9c29d8bf543, type: 2}
+  - {fileID: 7400000, guid: 1a198269f9ff840829a615abf790b52b, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 0
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!1 &170076733
 GameObject:
   m_ObjectHideFlags: 0
@@ -275,7 +305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdd20495687d3d646974e906c813f767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  num_chickens: 30
+  num_chickens: 3
 --- !u!4 &174246771
 Transform:
   m_ObjectHideFlags: 0
@@ -1271,7 +1301,7 @@ Animation:
   m_Animations:
   - {fileID: 7400000, guid: 62903d78066e2494f849ccfcc8f124de, type: 2}
   - {fileID: 7400000, guid: bcadc0b05027c704cae2f74c2ec52ff4, type: 2}
-  - {fileID: 7400000, guid: aee7231b0a8bf6946889485c2cd80e91, type: 2}
+  - {fileID: 7400000, guid: dd2d3f99275624ec899dc9c29d8bf543, type: 2}
   - {fileID: 7400000, guid: f784beb326698ad45b078e8505c9b7c2, type: 2}
   - {fileID: 7400000, guid: ca66ca814ef1d0240af07588ef4ce4ea, type: 2}
   - {fileID: 7400000, guid: a51ee69afd2f33343848e693115d0cc5, type: 2}
@@ -1290,7 +1320,7 @@ Animator:
   m_GameObject: {fileID: 1438682051}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 31653aefa3d96d543b168bac44e368cf, type: 2}
+  m_Controller: {fileID: 9100000, guid: a61bdedfaae9c40fdb3b50882987ddf9, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1319,8 +1349,10 @@ MonoBehaviour:
   max_velocity: 0
   has_collided_with_player: 0
   num_switches: 0
+  has_tried_to_enter: 0
   player_script: {fileID: 0}
   girl_script: {fileID: 0}
+  game_runner_script: {fileID: 0}
 --- !u!54 &1438682055
 Rigidbody:
   m_ObjectHideFlags: 0
