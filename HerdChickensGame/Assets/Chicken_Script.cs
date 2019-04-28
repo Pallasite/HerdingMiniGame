@@ -4,6 +4,7 @@ using UnityEngine;
 public class Chicken_Script : MonoBehaviour
 {
     public Animation anim;
+    public Animator animator;
     public Animation girl_anim;
 
     public Rigidbody chicken;
@@ -31,6 +32,7 @@ public class Chicken_Script : MonoBehaviour
         anim = gameObject.GetComponent<Animation>(); //initializes the animation controller for the chickens
         girl_anim = girl.GetComponent<Animation>(); //initializes the animation controller for the girl
         game_runner_script = FindObjectOfType<Game_Runner>();
+        animator = gameObject.GetComponent<Animator>();
 
         chicken.useGravity = true;
         chicken.isKinematic = false;
@@ -151,16 +153,17 @@ public class Chicken_Script : MonoBehaviour
         if (collision.gameObject.name == "Player")
         {
             has_collided_with_player = true;
+
+            ResetAnimations();
+            animator.SetBool("panic_bool", true);
         }
 
         if (collision.gameObject.name == "Grass")
         {
-            anim.Play("shout");
-            Debug.Log("played shout");
-
-            float rand_x = Random.Range(-150.0f, 150.0f);
+            Debug.Log(animator.GetCurrentAnimatorStateInfo(0));
+            
             //makes chicken bounce in the air
-            chicken.AddForce(rand_x, 1000.0f, 0.0f);
+            chicken.AddForce(500.0f, 1000.0f, 0.0f);
 
             //random number generator for int numbers 0 (inclusive) to 99 (inclusive) for deciding which track
             int switch_num = Random.Range(0, 99);
@@ -189,33 +192,40 @@ public class Chicken_Script : MonoBehaviour
          * if the ball touches the ramp, it will either enter the henhouse or it will jump off the side, 
          * based on the specified condition
          */
-        if (collision.gameObject.name == "Ramp" && has_collided_with_player)
+        if (collision.gameObject.name == "Ramp")
         {
+            ResetAnimations();
+            animator.SetBool("pokpok_bool", true);
+            
             //random number generator for int numbers 1 (inclusive) to 10 (inclusive) for the jump/enter (10 numbers)
             int rand_enter_num = Random.Range(1, 10);
 
-            //30% of the time, chicken will jump towards the henhouse
-            if (has_tried_to_enter || rand_enter_num <= 6)
+            //80% of the time, chicken will jump towards the henhouse
+            if (has_tried_to_enter || rand_enter_num <= 8)
             {
                 has_tried_to_enter = true;
-                chicken.transform.Rotate(0, -90, 0);
+                float cur_x = chicken.position.x;
+                float cur_z = chicken.position.z;
+
+                chicken.transform.Rotate(cur_x, -90.0f, cur_z);
 
                 chicken.AddForce(1800.0f, 750.0f, 0.0f);
-                Debug.Log("forcing it into the coop");
             }
 
-            //70% of the time, chicken will jump away from the henhouse
+            //20% of the time, chicken will jump away from the henhouse
             else
             {
                 chicken.AddForce(-800.0f, 200.0f, 0.0f);
             }
         }
 
-        if (collision.gameObject.name == "Henhouse" && onTrackOne())
+        if (collision.gameObject.name == "Henhouse" && OnTrackOne())
         {
-            //do a random thing here, like sometimes it enters and sometimes it doesn't!! FIXME:
-            Destroy(this.gameObject);
-            game_runner_script.Decrement_Num_Chickens();
+            if(has_collided_with_player) {
+                //do a random thing here, like sometimes it enters and sometimes it doesn't!! FIXME:
+                Destroy(this.gameObject);
+                game_runner_script.Decrement_Num_Chickens();
+            }
 
             //girl jumps in background unless the animation of her jumping is already currently playing
             girl_anim["Girl_Happy_Jump"].speed = 2.5f;
@@ -226,7 +236,16 @@ public class Chicken_Script : MonoBehaviour
         }
     }
 
-    public bool onTrackOne()
+    public void ResetAnimations()
+    {
+        animator.SetBool("shout_bool", false);
+        animator.SetBool("panic_bool", false);
+        animator.SetBool("cheer_bool", false);
+
+        return;
+    }
+
+    public bool OnTrackOne()
     {
         if (chicken.position.z == -3.0)
         {
@@ -238,7 +257,7 @@ public class Chicken_Script : MonoBehaviour
         }
     }
 
-    public bool onTrackTwo()
+    public bool OnTrackTwo()
     {
         if (chicken.position.z == -5.0)
         {

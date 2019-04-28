@@ -9,7 +9,7 @@ public class Game_Runner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GameObject g = GameObject.Find("Chicken");
+        GameObject g = GameObject.Find("rudy");
         for (int i = 0; i < num_chickens; i++)
         {
             GameObject c = GameObject.Instantiate(g);
