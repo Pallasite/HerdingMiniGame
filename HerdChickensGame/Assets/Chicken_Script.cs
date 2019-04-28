@@ -10,17 +10,18 @@ public class Chicken_Script : MonoBehaviour
     public Rigidbody chicken;
     public Rigidbody player;
     public GameObject girl;
+    public Collider chicken_collider;
 
     public float max_velocity;
     public bool has_collided_with_player;
     public int num_switches;
     public bool has_tried_to_enter;
+    public bool has_been_dizzy;
 
     public Player_Script player_script;
     public Girl_Script girl_script;
     public Game_Runner game_runner_script;
-
-
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -33,6 +34,7 @@ public class Chicken_Script : MonoBehaviour
         girl_anim = girl.GetComponent<Animation>(); //initializes the animation controller for the girl
         game_runner_script = FindObjectOfType<Game_Runner>();
         animator = gameObject.GetComponent<Animator>();
+        chicken_collider = chicken.GetComponent<Collider>();
 
         chicken.useGravity = true;
         chicken.isKinematic = false;
@@ -41,6 +43,7 @@ public class Chicken_Script : MonoBehaviour
         has_collided_with_player = false;
         has_tried_to_enter = false;
         num_switches = 0;
+        has_been_dizzy = false;
 
         //chicken.mass = 1000;
     }
@@ -152,39 +155,74 @@ public class Chicken_Script : MonoBehaviour
     {
         if (collision.gameObject.name == "Player")
         {
+            if((chicken.velocity.x + chicken.velocity.y + chicken.velocity.z) == 0.0f)
+            {
+                Debug.Log("entered!");
+                chicken.velocity = max_velocity * chicken.velocity.normalized;
+            }
             has_collided_with_player = true;
+            int rand = RandomNum();
 
             ResetAnimations();
-            animator.SetBool("panic_bool", true);
+            if(rand <= 5)
+            {
+                animator.SetBool("shout_bool", true);
+            }
+            else
+            {
+                animator.SetBool("cheer_bool", true);
+            }
+
+            chicken.AddForce(2500.0f, 1000.0f, 0.0f);
         }
 
         if (collision.gameObject.name == "Grass")
         {
             Debug.Log(animator.GetCurrentAnimatorStateInfo(0));
-            
-            //makes chicken bounce in the air
-            chicken.AddForce(500.0f, 1000.0f, 0.0f);
+            int rand = RandomNum();
 
-            //random number generator for int numbers 0 (inclusive) to 99 (inclusive) for deciding which track
-            int switch_num = Random.Range(0, 99);
-
-            //variables for the current position
-            float cur_x = chicken.position.x;
-            float cur_y = chicken.position.y;
-            float cur_z = chicken.position.z;
-
-            //go to track one
-            if (cur_z == -5.0f && switch_num <= 50 && chicken.position.x <= 3.0f) //3.0 is where the ramp starts
+            if (!has_been_dizzy && rand <= 6)
             {
-                chicken.transform.position = new Vector3(cur_x, cur_y, -3.0f);
-                num_switches++;
+                has_been_dizzy = true;
+                ResetAnimations();
+                animator.SetBool("dizzy_bool", true);
+                //chicken_collider.material.bounciness = 0.0f;
+                chicken.velocity = new Vector3(0.0f, 0.0f, 0.0f);
+                //chicken.AddForce(1.0f, 1.0f, 0.0f);
             }
-
-            //go to track two
-            else if (game_runner_script.Get_Num_Chickens() >= 5 && cur_z == -3.0f && num_switches <= 15)
+            else
             {
-                chicken.transform.position = new Vector3(cur_x, cur_y, -5.0f);
-                num_switches++;
+                //makes chicken bounce in the air
+                if (rand <= 5)
+                {
+                    chicken.AddForce(500.0f, 1000.0f, 0.0f);
+                }
+                else
+                {
+                    chicken.AddForce(-500.0f, 1000.0f, 0.0f);
+                }
+
+                //random number generator for int numbers 0 (inclusive) to 99 (inclusive) for deciding which track
+                int switch_num = Random.Range(0, 99);
+
+                //variables for the current position
+                float cur_x = chicken.position.x;
+                float cur_y = chicken.position.y;
+                float cur_z = chicken.position.z;
+
+                //go to track one
+                if (cur_z == -5.0f && switch_num <= 50 && chicken.position.x <= 3.0f) //3.0 is where the ramp starts
+                {
+                    chicken.transform.position = new Vector3(cur_x, cur_y, -3.0f);
+                    num_switches++;
+                }
+
+                //go to track two
+                else if (game_runner_script.Get_Num_Chickens() >= 5 && cur_z == -3.0f && num_switches <= 15)
+                {
+                    chicken.transform.position = new Vector3(cur_x, cur_y, -5.0f);
+                    num_switches++;
+                }
             }
         }
 
@@ -200,19 +238,15 @@ public class Chicken_Script : MonoBehaviour
             //random number generator for int numbers 1 (inclusive) to 10 (inclusive) for the jump/enter (10 numbers)
             int rand_enter_num = Random.Range(1, 10);
 
-            //80% of the time, chicken will jump towards the henhouse
-            if (has_tried_to_enter || rand_enter_num <= 8)
+            //60% of the time, chicken will jump towards the henhouse
+            if (has_tried_to_enter || rand_enter_num <= 6)
             {
                 has_tried_to_enter = true;
-                float cur_x = chicken.position.x;
-                float cur_z = chicken.position.z;
-
-                chicken.transform.Rotate(cur_x, -90.0f, cur_z);
-
+                //SetEnterHenhouseRotation();
                 chicken.AddForce(1800.0f, 750.0f, 0.0f);
             }
 
-            //20% of the time, chicken will jump away from the henhouse
+            //40% of the time, chicken will jump away from the henhouse
             else
             {
                 chicken.AddForce(-800.0f, 200.0f, 0.0f);
@@ -234,6 +268,38 @@ public class Chicken_Script : MonoBehaviour
                 girl_anim.Play("Girl_Happy_Jump");
             }
         }
+    }
+    public void SetEnterHenhouseRotation()
+    {
+        float rotation_num = 0.0f;
+        float cur_x = chicken.position.x;
+        float cur_z = chicken.position.z;
+
+        if(chicken.rotation.y == 0.0f)
+        {
+            rotation_num = 90.0f;
+        } 
+        else if(chicken.rotation.y == 90.0f)
+        {
+            rotation_num = 0.0f;
+        } 
+        else if(chicken.rotation.y == 180.0f)
+        {
+            rotation_num = -90.0f;
+        } 
+        else if(chicken.rotation.y == 270.0f)
+        {
+            rotation_num = -180.0f;
+        }
+
+        chicken.transform.Rotate(cur_x, rotation_num, cur_z);
+        return;
+    }
+
+    public int RandomNum() //1 through 10
+    {
+        int rand = Random.Range(1, 10);
+        return rand;
     }
 
     public void ResetAnimations()
