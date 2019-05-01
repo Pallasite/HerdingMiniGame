@@ -56,6 +56,22 @@ public class Chicken_Script : MonoBehaviour
             chicken.velocity = max_velocity * chicken.velocity.normalized;
         }
 
+        if (chicken.position.x > 2.0 && chicken.position.z == -3.0f)
+        {
+            ResetAnimations();
+            animator.SetBool("faceright_bool", true);
+        }
+
+        else
+        {
+            if(animator.GetBool("faceright_bool") == true)
+            {
+                ResetAnimations();
+                animator.SetBool("faceforward_bool", true);
+                animator.SetBool("flyagain_bool", true);
+            }
+        }
+
         /*
          * there are always forces acting on the chickens to subtly move them across the screen, if
          * the chicken's position gets too far to the right, the force moves it to the left, and vice
@@ -125,9 +141,6 @@ public class Chicken_Script : MonoBehaviour
             //if chicken goes too far on the right of the screen and it's on track two
             if (chicken.position.x > 6.5f && chicken.position.z == -5.0f)
             {
-                //jumps to the left onto track one
-                //anim.Play("JL_T2_to_T1");
-                Debug.Log("bounce her to the left!");
                 chicken.AddForce(-300.0f, 500.0f, 0.0f);
             }
 
@@ -137,14 +150,12 @@ public class Chicken_Script : MonoBehaviour
                 //if chicken is currently on track one
                 if (chicken.position.z == -3.0f)
                 {
-                    Debug.Log("bounce her to the right 1!");
                     chicken.AddForce(100.0f, 300.0f, 0.0f);
                 }
 
                 //if chicken is currently on track two
                 else if (chicken.position.z == -5.0f)
                 {
-                    Debug.Log("bounce her to the right 2!");
                     chicken.AddForce(100.0f, 300.0f, 0.0f);
                 }
             }
@@ -155,22 +166,20 @@ public class Chicken_Script : MonoBehaviour
     {
         if (collision.gameObject.name == "Player")
         {
-            if((chicken.velocity.x + chicken.velocity.y + chicken.velocity.z) == 0.0f)
-            {
-                Debug.Log("entered!");
-                chicken.velocity = max_velocity * chicken.velocity.normalized;
-            }
             has_collided_with_player = true;
             int rand = RandomNum();
 
-            ResetAnimations();
-            if(rand <= 5)
+            if (!animator.GetBool("faceright_bool") && !animator.GetBool("faceforward_bool"))
             {
-                animator.SetBool("shout_bool", true);
-            }
-            else
-            {
-                animator.SetBool("cheer_bool", true);
+                ResetAnimations();
+                if (rand <= 5)
+                {
+                    animator.SetBool("shout_bool", true);
+                }
+                else
+                {
+                    animator.SetBool("panic_bool", true);
+                }
             }
 
             chicken.AddForce(2500.0f, 1000.0f, 0.0f);
@@ -178,51 +187,48 @@ public class Chicken_Script : MonoBehaviour
 
         if (collision.gameObject.name == "Grass")
         {
-            Debug.Log(animator.GetCurrentAnimatorStateInfo(0));
             int rand = RandomNum();
 
-            if (!has_been_dizzy && rand <= 6)
+            ResetAnimations();
+            if (rand <= 5)
             {
-                has_been_dizzy = true;
-                ResetAnimations();
-                animator.SetBool("dizzy_bool", true);
-                //chicken_collider.material.bounciness = 0.0f;
-                chicken.velocity = new Vector3(0.0f, 0.0f, 0.0f);
-                //chicken.AddForce(1.0f, 1.0f, 0.0f);
+                animator.SetBool("pokpok_bool", true);
             }
             else
             {
-                //makes chicken bounce in the air
-                if (rand <= 5)
-                {
-                    chicken.AddForce(500.0f, 1000.0f, 0.0f);
-                }
-                else
-                {
-                    chicken.AddForce(-500.0f, 1000.0f, 0.0f);
-                }
+                animator.SetBool("cheer_bool", true);
+            }
 
-                //random number generator for int numbers 0 (inclusive) to 99 (inclusive) for deciding which track
-                int switch_num = Random.Range(0, 99);
+            //makes chicken bounce in the air
+            if (rand <= 5)
+            {
+                chicken.AddForce(500.0f, 1000.0f, 0.0f);
+            }
+            else
+            {
+                chicken.AddForce(-500.0f, 1000.0f, 0.0f);
+            }
+       
+            //random number generator for int numbers 0 (inclusive) to 99 (inclusive) for deciding which track
+            int switch_num = Random.Range(0, 99);
 
-                //variables for the current position
-                float cur_x = chicken.position.x;
-                float cur_y = chicken.position.y;
-                float cur_z = chicken.position.z;
+            //variables for the current position
+            float cur_x = chicken.position.x;
+            float cur_y = chicken.position.y;
+            float cur_z = chicken.position.z;
 
-                //go to track one
-                if (cur_z == -5.0f && switch_num <= 50 && chicken.position.x <= 3.0f) //3.0 is where the ramp starts
-                {
-                    chicken.transform.position = new Vector3(cur_x, cur_y, -3.0f);
-                    num_switches++;
-                }
+            //go to track one
+            if (cur_z == -5.0f && switch_num <= 50 && chicken.position.x <= 3.0f) //3.0 is where the ramp starts
+            {
+                chicken.transform.position = new Vector3(cur_x, cur_y, -3.0f);
+                num_switches++;
+            }
 
-                //go to track two
-                else if (game_runner_script.Get_Num_Chickens() >= 5 && cur_z == -3.0f && num_switches <= 15)
-                {
-                    chicken.transform.position = new Vector3(cur_x, cur_y, -5.0f);
-                    num_switches++;
-                }
+            //go to track two
+            else if (game_runner_script.Get_Num_Chickens() >= 5 && cur_z == -3.0f && num_switches <= 15)
+            {
+                chicken.transform.position = new Vector3(cur_x, cur_y, -5.0f);
+                num_switches++;
             }
         }
 
@@ -232,9 +238,6 @@ public class Chicken_Script : MonoBehaviour
          */
         if (collision.gameObject.name == "Ramp")
         {
-            ResetAnimations();
-            animator.SetBool("pokpok_bool", true);
-            
             //random number generator for int numbers 1 (inclusive) to 10 (inclusive) for the jump/enter (10 numbers)
             int rand_enter_num = Random.Range(1, 10);
 
@@ -256,7 +259,6 @@ public class Chicken_Script : MonoBehaviour
         if (collision.gameObject.name == "Henhouse" && OnTrackOne())
         {
             if(has_collided_with_player) {
-                //do a random thing here, like sometimes it enters and sometimes it doesn't!! FIXME:
                 Destroy(this.gameObject);
                 game_runner_script.Decrement_Num_Chickens();
             }
@@ -307,6 +309,12 @@ public class Chicken_Script : MonoBehaviour
         animator.SetBool("shout_bool", false);
         animator.SetBool("panic_bool", false);
         animator.SetBool("cheer_bool", false);
+        animator.SetBool("pokpok_bool", false);
+        animator.SetBool("gethit_bool", false);
+        animator.SetBool("dizzy_bool", false);
+        animator.SetBool("faceright_bool", false);
+        animator.SetBool("faceforward_bool", false);
+        animator.SetBool("flyagain_bool", false);
 
         return;
     }
