@@ -56,11 +56,13 @@ public class Chicken_Script : MonoBehaviour
             chicken.velocity = max_velocity * chicken.velocity.normalized;
         }
         
-        if (!anim.IsPlaying("panic_bool") && chicken.position.x > 0.0 && chicken.position.z == -3.0f)
+        if (chicken.position.x > 0.0 && chicken.position.z == -3.0f)
         {
             ResetAnimations();
             animator.SetBool("panic_bool", true);
-        } else {
+
+        }
+        else {
             animator.SetBool("panic_bool", false);
         }
 
@@ -154,9 +156,44 @@ public class Chicken_Script : MonoBehaviour
 
         if (collision.gameObject.name == "Grass")
         {
-            Debug.Log("BAM!");
-            int rand = RandomNum();
-            if (!anim.IsPlaying("panic_bool"))
+            //random number generator for int numbers 0 (inclusive) to 99 (inclusive) for deciding which track
+            int switch_num = Random.Range(0, 99);
+
+            //variables for the current position
+            float cur_x = chicken.position.x;
+            float cur_y = chicken.position.y;
+            float cur_z = chicken.position.z;
+
+            int cur_num_chickens = game_runner_script.Get_Num_Chickens();
+            if(cur_num_chickens < 8)
+            {
+                chicken.transform.position = new Vector3(cur_x, cur_y, -3.0f);
+            }
+            else
+            {
+                //go to track one
+                if (cur_z == -5.0f && cur_x <= 3.0f) //3.0 is where the ramp starts
+                {
+                    if (switch_num <= 50)
+                    {
+                        chicken.transform.position = new Vector3(cur_x, cur_y, -3.0f);
+                    }
+                }
+
+                //go to track two
+                else if (cur_z == -3.0f)
+                {
+                    if (switch_num <= 50)
+                    {
+                        chicken.transform.position = new Vector3(cur_x, cur_y, -5.0f);
+                    }
+                }
+
+            }
+
+            int rand = RandomNum(); //num 1 - 10
+            
+            if (!animator.GetBool("panic_bool"))
             {
                 ResetAnimations();
                 if (rand <= 5)
@@ -179,28 +216,7 @@ public class Chicken_Script : MonoBehaviour
                 chicken.AddForce(-500.0f, 1000.0f, 0.0f);
             }
        
-            //random number generator for int numbers 0 (inclusive) to 99 (inclusive) for deciding which track
-            int switch_num = Random.Range(0, 99);
-
-            //variables for the current position
-            float cur_x = chicken.position.x;
-            float cur_y = chicken.position.y;
-            float cur_z = chicken.position.z;
-
-            //go to track one
-            Debug.Log(game_runner_script.Get_Num_Chickens());
-            if (cur_z == -5.0f && switch_num <= 50 && chicken.position.x <= 3.0f) //3.0 is where the ramp starts
-            {
-                chicken.transform.position = new Vector3(cur_x, cur_y, -3.0f);
-                num_switches++;
-            }
-
-            //go to track two
-            else if (game_runner_script.Get_Num_Chickens() >= 8 && cur_z == -3.0f && num_switches <= 15)
-            {
-                chicken.transform.position = new Vector3(cur_x, cur_y, -5.0f);
-                num_switches++;
-            }
+            
         }
 
         /*

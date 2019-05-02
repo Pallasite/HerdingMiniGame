@@ -21,13 +21,13 @@ public class Player_Script : MonoBehaviour
 
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            position.x -= 0.15f;
+            position.x -= 0.25f;
             this.transform.position = position;
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
             //Vector3 position = this.transform.position;
-            position.x += 0.15f;
+            position.x += 0.25f;
             this.transform.position = position;
         }
 
