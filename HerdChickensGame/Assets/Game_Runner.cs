@@ -45,10 +45,4 @@ public class Game_Runner : MonoBehaviour
     {
         return num_chickens;
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }

@@ -55,21 +55,13 @@ public class Chicken_Script : MonoBehaviour
         {
             chicken.velocity = max_velocity * chicken.velocity.normalized;
         }
-
-        if (chicken.position.x > 2.0 && chicken.position.z == -3.0f)
+        
+        if (!anim.IsPlaying("panic_bool") && chicken.position.x > 0.0 && chicken.position.z == -3.0f)
         {
             ResetAnimations();
-            animator.SetBool("faceright_bool", true);
-        }
-
-        else
-        {
-            if(animator.GetBool("faceright_bool") == true)
-            {
-                ResetAnimations();
-                animator.SetBool("faceforward_bool", true);
-                animator.SetBool("flyagain_bool", true);
-            }
+            animator.SetBool("panic_bool", true);
+        } else {
+            animator.SetBool("panic_bool", false);
         }
 
         /*
@@ -104,23 +96,6 @@ public class Chicken_Script : MonoBehaviour
                 //chicken is always moving to the right
                 chicken.AddForce(0.3f, 0.0f, 0.0f);
             }
-        }
-
-
-        /*
-         * if two minutes have passed and the chickens are still not in the henhouse, a 
-         * fox comes from the left of the screen and scares them back into the henhouse
-         * 
-         * this action would essesntially stop gameplay and freeze the position of the
-         * player as the chickens make their way back into the henhouse
-         */
-        if (Time.time > 180.0)
-        {
-            /* TODO:
-             * 
-             * add code for the fox appearing from the side, disabling user motion, and 
-             * forcing the chickens to go into the henhouse
-             */
         }
 
         /*
@@ -168,35 +143,30 @@ public class Chicken_Script : MonoBehaviour
         {
             has_collided_with_player = true;
             int rand = RandomNum();
-
-            if (!animator.GetBool("faceright_bool") && !animator.GetBool("faceforward_bool"))
+            
+            if (!(chicken.position.x > 0.0) && !(chicken.position.z == -3.0f))
             {
                 ResetAnimations();
-                if (rand <= 5)
-                {
-                    animator.SetBool("shout_bool", true);
-                }
-                else
-                {
-                    animator.SetBool("panic_bool", true);
-                }
+                animator.SetBool("shout_bool", true);
             }
-
             chicken.AddForce(2500.0f, 1000.0f, 0.0f);
         }
 
         if (collision.gameObject.name == "Grass")
         {
+            Debug.Log("BAM!");
             int rand = RandomNum();
-
-            ResetAnimations();
-            if (rand <= 5)
+            if (!anim.IsPlaying("panic_bool"))
             {
-                animator.SetBool("pokpok_bool", true);
-            }
-            else
-            {
-                animator.SetBool("cheer_bool", true);
+                ResetAnimations();
+                if (rand <= 5)
+                {
+                    animator.SetBool("pokpok_bool", true);
+                }
+                else
+                {
+                    animator.SetBool("cheer_bool", true);
+                }
             }
 
             //makes chicken bounce in the air
@@ -218,6 +188,7 @@ public class Chicken_Script : MonoBehaviour
             float cur_z = chicken.position.z;
 
             //go to track one
+            Debug.Log(game_runner_script.Get_Num_Chickens());
             if (cur_z == -5.0f && switch_num <= 50 && chicken.position.x <= 3.0f) //3.0 is where the ramp starts
             {
                 chicken.transform.position = new Vector3(cur_x, cur_y, -3.0f);
@@ -225,7 +196,7 @@ public class Chicken_Script : MonoBehaviour
             }
 
             //go to track two
-            else if (game_runner_script.Get_Num_Chickens() >= 5 && cur_z == -3.0f && num_switches <= 15)
+            else if (game_runner_script.Get_Num_Chickens() >= 8 && cur_z == -3.0f && num_switches <= 15)
             {
                 chicken.transform.position = new Vector3(cur_x, cur_y, -5.0f);
                 num_switches++;
@@ -261,41 +232,15 @@ public class Chicken_Script : MonoBehaviour
             if(has_collided_with_player) {
                 Destroy(this.gameObject);
                 game_runner_script.Decrement_Num_Chickens();
-            }
 
-            //girl jumps in background unless the animation of her jumping is already currently playing
-            girl_anim["Girl_Happy_Jump"].speed = 2.5f;
-            if (!girl_anim.IsPlaying("Girl_Happy_Jump"))
-            {
-                girl_anim.Play("Girl_Happy_Jump");
+                //girl jumps in background unless the animation of her jumping is already currently playing
+                girl_anim["Girl_Happy_Jump"].speed = 2.5f;
+                if (!girl_anim.IsPlaying("Girl_Happy_Jump"))
+                {
+                    girl_anim.Play("Girl_Happy_Jump");
+                }
             }
         }
-    }
-    public void SetEnterHenhouseRotation()
-    {
-        float rotation_num = 0.0f;
-        float cur_x = chicken.position.x;
-        float cur_z = chicken.position.z;
-
-        if(chicken.rotation.y == 0.0f)
-        {
-            rotation_num = 90.0f;
-        } 
-        else if(chicken.rotation.y == 90.0f)
-        {
-            rotation_num = 0.0f;
-        } 
-        else if(chicken.rotation.y == 180.0f)
-        {
-            rotation_num = -90.0f;
-        } 
-        else if(chicken.rotation.y == 270.0f)
-        {
-            rotation_num = -180.0f;
-        }
-
-        chicken.transform.Rotate(cur_x, rotation_num, cur_z);
-        return;
     }
 
     public int RandomNum() //1 through 10
@@ -306,15 +251,18 @@ public class Chicken_Script : MonoBehaviour
 
     public void ResetAnimations()
     {
+        if(anim.IsPlaying("panic"))
+        {
+            animator.SetBool("panic_bool", false);
+            animator.SetBool("flyagain_bool", true);
+        }
         animator.SetBool("shout_bool", false);
         animator.SetBool("panic_bool", false);
         animator.SetBool("cheer_bool", false);
         animator.SetBool("pokpok_bool", false);
         animator.SetBool("gethit_bool", false);
         animator.SetBool("dizzy_bool", false);
-        animator.SetBool("faceright_bool", false);
-        animator.SetBool("faceforward_bool", false);
-        animator.SetBool("flyagain_bool", false);
+        animator.SetBool("walk_bool", false);
 
         return;
     }
