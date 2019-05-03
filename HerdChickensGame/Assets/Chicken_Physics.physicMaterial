@@ -9,6 +9,6 @@ PhysicMaterial:
   m_Name: Chicken_Physics
   dynamicFriction: 0.6
   staticFriction: 0.6
-  bounciness: 0.987
+  bounciness: 0.9805824
   frictionCombine: 1
   bounceCombine: 3
