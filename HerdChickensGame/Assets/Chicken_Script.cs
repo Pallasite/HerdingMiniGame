@@ -118,7 +118,7 @@ public class Chicken_Script : MonoBehaviour
             //if chicken goes too far on the right of the screen and it's on track two
             if (chicken.position.x > 6.5f && chicken.position.z == -5.0f)
             {
-                chicken.AddForce(-300.0f, 500.0f, 0.0f);
+                chicken.AddForce(-300.0f, 75.0f, 0.0f);
             }
 
             //if chicken goes too far on the left of the screen
@@ -127,13 +127,13 @@ public class Chicken_Script : MonoBehaviour
                 //if chicken is currently on track one
                 if (chicken.position.z == -3.0f)
                 {
-                    chicken.AddForce(100.0f, 300.0f, 0.0f);
+                    chicken.AddForce(100.0f, 50.0f, 0.0f);
                 }
 
                 //if chicken is currently on track two
                 else if (chicken.position.z == -5.0f)
                 {
-                    chicken.AddForce(100.0f, 300.0f, 0.0f);
+                    chicken.AddForce(100.0f, 50.0f, 0.0f);
                 }
             }
         }
@@ -165,7 +165,7 @@ public class Chicken_Script : MonoBehaviour
             float cur_z = chicken.position.z;
 
             int cur_num_chickens = game_runner_script.Get_Num_Chickens();
-            if(cur_num_chickens < 8)
+            if(cur_num_chickens < 4)
             {
                 chicken.transform.position = new Vector3(cur_x, cur_y, -3.0f);
             }
@@ -207,13 +207,28 @@ public class Chicken_Script : MonoBehaviour
             }
 
             //makes chicken bounce in the air
+            float rand_y;
+            //90% range is between 1 and 50
+            int bounce_rand = RandomNum();
+
+            if (bounce_rand <= 9)
+            {
+                rand_y = Random.Range(1.0f, 50.0f);
+            } 
+            else
+            {
+                rand_y = Random.Range(1.0f, 500.0f);
+            }
+            // between 1 and 500
+
+            Debug.Log("chicken y: " + rand_y);
             if (rand <= 5)
             {
-                chicken.AddForce(500.0f, 1000.0f, 0.0f);
+                chicken.AddForce(500.0f, rand_y, 0.0f);
             }
             else
             {
-                chicken.AddForce(-500.0f, 1000.0f, 0.0f);
+                chicken.AddForce(-500.0f, rand_y, 0.0f);
             }
        
             
@@ -229,7 +244,7 @@ public class Chicken_Script : MonoBehaviour
             int rand_enter_num = Random.Range(1, 10);
 
             //60% of the time, chicken will jump towards the henhouse
-            if (has_tried_to_enter || rand_enter_num <= 6)
+            if (has_tried_to_enter || rand_enter_num <= 4)
             {
                 has_tried_to_enter = true;
                 //SetEnterHenhouseRotation();
@@ -239,7 +254,7 @@ public class Chicken_Script : MonoBehaviour
             //40% of the time, chicken will jump away from the henhouse
             else
             {
-                chicken.AddForce(-800.0f, 200.0f, 0.0f);
+                chicken.AddForce(-800.0f, 450.0f, 0.0f);
             }
         }
 
