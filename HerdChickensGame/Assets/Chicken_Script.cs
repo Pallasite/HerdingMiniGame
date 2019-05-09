@@ -15,23 +15,22 @@ public class Chicken_Script : MonoBehaviour
     public float max_velocity;
     public bool has_collided_with_player;
     public int num_switches;
-    public bool has_tried_to_enter;
-    public bool has_been_dizzy;
+    public float time_on_ground;
 
     public Player_Script player_script;
     public Girl_Script girl_script;
     public Game_Runner game_runner_script;
-    
+
     // Start is called before the first frame update
     void Start()
     {
-        player_script = player.GetComponent<Player_Script>(); //reference to the script for the player
-        girl_script = girl.GetComponent<Girl_Script>(); //reference to the script for the girl
+        //initializes all of the variables that are used during execution
+        player_script = player.GetComponent<Player_Script>();
+        girl_script = girl.GetComponent<Girl_Script>(); 
 
-
-        chicken = GetComponent<Rigidbody>(); //initializes this chicken object
-        anim = gameObject.GetComponent<Animation>(); //initializes the animation controller for the chickens
-        girl_anim = girl.GetComponent<Animation>(); //initializes the animation controller for the girl
+        chicken = GetComponent<Rigidbody>(); 
+        anim = gameObject.GetComponent<Animation>();
+        girl_anim = girl.GetComponent<Animation>();
         game_runner_script = FindObjectOfType<Game_Runner>();
         animator = gameObject.GetComponent<Animator>();
         chicken_collider = chicken.GetComponent<Collider>();
@@ -41,158 +40,145 @@ public class Chicken_Script : MonoBehaviour
 
         max_velocity = 10.0f;
         has_collided_with_player = false;
-        has_tried_to_enter = false;
-        num_switches = 0;
-        has_been_dizzy = false;
-
-        //chicken.mass = 1000;
     }
 
-    // Update is called once per frame
+    /*
+     * called every frame
+     */
     void Update()
     {
+        /*
+         * this check ensures that the velocity of the chicken never exceeds the maximum so that 
+         * the bouncing never becomes too extreme
+         */
         if (chicken.velocity.magnitude > max_velocity)
         {
             chicken.velocity = max_velocity * chicken.velocity.normalized;
         }
-        
-        if (chicken.position.x > 0.0 && chicken.position.z == -3.0f)
+
+        /*
+         * if the chicken is positioned on or a little in front of the ramp, it will play the
+         * panic animation which also changes the rotation of the chicken to face the henhouse,
+         * this will hopefully cue the user that the chicken is correctly positioned to enter
+         * the henhouse
+         */
+        if (chicken.position.x > 0.0 && OnTrackOne())
         {
             ResetAnimations();
             animator.SetBool("panic_bool", true);
-
         }
-        else {
+        else
+        {
             animator.SetBool("panic_bool", false);
+            animator.SetBool("flyagain_bool", true);
         }
 
         /*
-         * there are always forces acting on the chickens to subtly move them across the screen, if
-         * the chicken's position gets too far to the right, the force moves it to the left, and vice
-         * versa; these forces are only enacted after the player has started moving, to ensure that
-         * chickens won't climb the ramp or move across the screen until gameplay has begun. this 
-         * gives the actors time to explain the scene while also providing a visual of the bouncing
-         * chickens.
+         * if a chicken goes too far on either side of the screen, a force is added to it to 
+         * bounce it back towards the play area to ensure a chicken never goes offscreen.
          */
-
-        //chicken is currently on track one
-        if (chicken.position.z == -3.0f)
-        {
-            //chicken is always moving to the right
-            chicken.AddForce(0.3f, 0.0f, 0.0f);
-        }
-
-        //chicken is currently on track two
-        else if (chicken.position.z == -5.0f)
-        {
-            //if chicken gets too far to the right
-            if (chicken.position.x > 5.0f)
-            {
-                //chicken is always moving to the left
-                chicken.AddForce(-0.3f, 0.0f, 0.0f);
-            }
-
-            //if chicken gets too far to the left
-            if (chicken.position.x < -5.5f)
-            {
-                //chicken is always moving to the right
-                chicken.AddForce(0.3f, 0.0f, 0.0f);
-            }
-        }
-
-        /*
-         * chickens move between track one and track two if they are pushed too far to one side, 
-         * and only when they are on track one are they aligned properly to move into the henhouse
-         * 
-         * from the view of the player, the tracks are the same, since their view is "2D", 
-         * so it simply appears that the chickens sometimes are pushed right past the ramp
-         * and sometimes they walk up it
-         * 
-         * track one: along the line z = -3.0f
-         * track two: along the line z = -5.0f
-         */
-
         if (chicken.position.x > 6.5f || chicken.position.x < -7.5f)
         {
-
-            //if chicken goes too far on the right of the screen and it's on track two
-            if (chicken.position.x > 6.5f && chicken.position.z == -5.0f)
+            //too far right
+            if (chicken.position.x > 6.5f && OnTrackTwo())
             {
-                chicken.AddForce(-300.0f, 75.0f, 0.0f);
+                Bounce(-300.0f, 75.0f, 0.0f);
             }
 
-            //if chicken goes too far on the left of the screen
+            //too far left
             else if (chicken.position.x < -7.5f)
             {
-                //if chicken is currently on track one
-                if (chicken.position.z == -3.0f)
-                {
-                    chicken.AddForce(100.0f, 50.0f, 0.0f);
-                }
-
-                //if chicken is currently on track two
-                else if (chicken.position.z == -5.0f)
-                {
-                    chicken.AddForce(100.0f, 50.0f, 0.0f);
-                }
+                Bounce(100.0f, 50.0f, 0.0f);
             }
         }
     }
 
+    /*
+     * this method is called whenever a chicken collides with an object
+     */
     public void OnCollisionEnter(Collision collision)
     {
+
+        //if the chicken collides with the player
         if (collision.gameObject.name == "Player")
         {
-            has_collided_with_player = true;
-            int rand = RandomNum();
-            
-            if (!(chicken.position.x > 0.0) && !(chicken.position.z == -3.0f))
+            has_collided_with_player = true; //sets flag and allows chicken to enter henhouse
+
+            /*
+             * only plays the animation 'shout' if the chicken is not in the location where it's
+             * oriented to enter the henhouse (i.e. if it's not currently playing 'panic', thus 
+             * not altering its new rotation
+             */
+            if (!(chicken.position.x > 0.0) && !OnTrackOne())
             {
                 ResetAnimations();
                 animator.SetBool("shout_bool", true);
             }
-            chicken.AddForce(2500.0f, 1000.0f, 0.0f);
+
+            Bounce(2500.0f, 1000.0f, 0.0f); //bounces the chicken with a substantial amount of force when colliding with the user
         }
 
+        //if the chicken collides with the grass
         if (collision.gameObject.name == "Grass")
         {
-            //random number generator for int numbers 0 (inclusive) to 99 (inclusive) for deciding which track
-            int switch_num = Random.Range(0, 99);
+            /*
+             * chickens move between track one and track two randomly upon colliding with the ground, and 
+             * only when they are on track one are they aligned properly to move into the henhouse.
+             * 
+             * from the view of the player, the tracks are the same, since their view is "2D", 
+             * so it simply appears that the chickens sometimes are pushed right past the ramp
+             * and sometimes they walk up it
+             * 
+             * track one: along the line z = -3.0f
+             * track two: along the line z = -5.0f
+             */
 
-            //variables for the current position
+            //sets a random number from 1 (inclusive) to 10 (inclusive)
+            int rand = RandomNum();
+
+            //variables for the current position of the chicken
             float cur_x = chicken.position.x;
             float cur_y = chicken.position.y;
             float cur_z = chicken.position.z;
 
+            //current number of chickens in game
             int cur_num_chickens = game_runner_script.Get_Num_Chickens();
-            if(cur_num_chickens < 4)
-            {
-                chicken.transform.position = new Vector3(cur_x, cur_y, -3.0f);
-            }
-            else
-            {
-                //go to track one
-                if (cur_z == -5.0f && cur_x <= 3.0f) //3.0 is where the ramp starts
-                {
-                    if (switch_num <= 50)
-                    {
-                        chicken.transform.position = new Vector3(cur_x, cur_y, -3.0f);
-                    }
-                }
 
-                //go to track two
-                else if (cur_z == -3.0f)
+            /* 
+             * if chicken is on track two and is not further right than where the ramp starts,
+             * this ensures that the chicken will not switch to track two and then get stuck under the ramp
+             */
+            if (OnTrackTwo() && cur_x <= 3.0f)
+            {
+                //if there are fewer than 6 chicekns it will go to track one, otherwise 50% of the time chicken will switch
+                if (cur_num_chickens < 6 || rand <= 5)
                 {
-                    if (switch_num <= 50)
-                    {
-                        chicken.transform.position = new Vector3(cur_x, cur_y, -5.0f);
-                    }
+                    //chicken switches to track one
+                    chicken.transform.position = new Vector3(cur_x, cur_y, -3.0f);
                 }
-
             }
 
-            int rand = RandomNum(); //num 1 - 10
-            
+            /* 
+             * if chicken is on track one and there are more than four chickens currently in the game, this 
+             * ensures that when the game is close to ending the chickens will mostly be oriented to
+             * enter the henhouse
+             */
+            if (OnTrackOne())
+            {
+                //if there are more than 6 chickens it could switch 50% of the time
+                if (cur_num_chickens > 6 && rand <= 5)
+                {
+                    //chicken switches to track two
+                    chicken.transform.position = new Vector3(cur_x, cur_y, -5.0f);
+                }
+
+            }
+
+            /*
+             * changes the animation of the chicken with each collision with the ground, unless
+             * the chicken is oriented to enter the henhouse, there's a 50% it will play 'pokpok'
+             * and a 50% it will play 'cheer'
+             */
             if (!animator.GetBool("panic_bool"))
             {
                 ResetAnimations();
@@ -206,62 +192,66 @@ public class Chicken_Script : MonoBehaviour
                 }
             }
 
-            //makes chicken bounce in the air
-            float rand_y;
-            //90% range is between 1 and 50
-            int bounce_rand = RandomNum();
+            float rand_y; //the new value for the y of the chicken
 
+            int bounce_rand = RandomNum(); //random num for bounce from 1 (inclusive) to 10 (inclusive)
+
+            //90% of the time, the chicken will bounce at a smaller interval, between 50 and 250
             if (bounce_rand <= 9)
             {
-                rand_y = Random.Range(1.0f, 50.0f);
-            } 
+                rand_y = Random.Range(250.0f, 400.0f);
+            }
+            //10% of the time, the chicken will bounce at a larger interval, between 250 and 600
             else
             {
-                rand_y = Random.Range(1.0f, 500.0f);
+                rand_y = Random.Range(400.0f, 800.0f);
             }
-            // between 1 and 500
 
-            Debug.Log("chicken y: " + rand_y);
+            //50% of the time, the chicken will bounce to the right
             if (rand <= 5)
             {
-                chicken.AddForce(500.0f, rand_y, 0.0f);
+                //positive x value means bounce to the right
+                Bounce(500.0f, rand_y, 0.0f);
             }
+            //50% of the time, the chicken will bounce to the left
             else
             {
-                chicken.AddForce(-500.0f, rand_y, 0.0f);
+                //negative x value means bounce to the left
+                Bounce(-500.0f, rand_y, 0.0f);
             }
-       
-            
         }
 
-        /*
-         * if the ball touches the ramp, it will either enter the henhouse or it will jump off the side, 
-         * based on the specified condition
-         */
+        //if the chicken collides with the ramp
         if (collision.gameObject.name == "Ramp")
         {
-            //random number generator for int numbers 1 (inclusive) to 10 (inclusive) for the jump/enter (10 numbers)
-            int rand_enter_num = Random.Range(1, 10);
+            int rand_enter_num = RandomNum(); //random num for entering or not from 1 (inclusive) to 10 (inclusive)
 
-            //60% of the time, chicken will jump towards the henhouse
-            if (has_tried_to_enter || rand_enter_num <= 4)
+            //40% of the time, chicken will bounce toward the henhouse
+            if (rand_enter_num <= 4)
             {
-                has_tried_to_enter = true;
-                //SetEnterHenhouseRotation();
-                chicken.AddForce(1800.0f, 750.0f, 0.0f);
+                Bounce(1800.0f, 750.0f, 0.0f);
             }
-
-            //40% of the time, chicken will jump away from the henhouse
+            //60% of the time, chicken will bounce away from the henhouse
             else
             {
-                chicken.AddForce(-800.0f, 450.0f, 0.0f);
+                Bounce(-800.0f, 450.0f, 0.0f);
             }
         }
 
+        //if the chicken collides with the henhouse
         if (collision.gameObject.name == "Henhouse" && OnTrackOne())
         {
-            if(has_collided_with_player) {
+            /*
+             * only if the chicken has collided with the player already is is able to enter the henhouse
+             * and be destroyed, this ensures that the chickens will not enter the henhouse until
+             * gameplay has started, and thus gives the actors ample time to set up the scene
+             */
+            if (has_collided_with_player)
+            {
+                //destroys the chicken
                 Destroy(this.gameObject);
+
+                //decrements the number of chickens in scene
                 game_runner_script.Decrement_Num_Chickens();
 
                 //girl jumps in background unless the animation of her jumping is already currently playing
@@ -274,19 +264,26 @@ public class Chicken_Script : MonoBehaviour
         }
     }
 
-    public int RandomNum() //1 through 10
+
+    /*
+     * Generates a random number from 1 (inclusive) to 10 (inclusive)
+     *
+     * @return random integer
+     */
+    public int RandomNum()
     {
         int rand = Random.Range(1, 10);
         return rand;
     }
 
+    /*
+     * Resets the boolean values for all of the animations and thus causes
+     * the animation controller to return to its default state
+     */ 
     public void ResetAnimations()
     {
-        if(anim.IsPlaying("panic"))
-        {
-            animator.SetBool("panic_bool", false);
-            animator.SetBool("flyagain_bool", true);
-        }
+        animator.SetBool("panic_bool", false);
+        animator.SetBool("flyagain_bool", false);
         animator.SetBool("shout_bool", false);
         animator.SetBool("panic_bool", false);
         animator.SetBool("cheer_bool", false);
@@ -298,6 +295,25 @@ public class Chicken_Script : MonoBehaviour
         return;
     }
 
+    /*
+     * Adds a force to the chicken based on the x, y, and z parameters that 
+     * allows it to jump
+     * 
+     * @param x x-value
+     * @param y y-value
+     * @param z z-value
+     */ 
+    public void Bounce(float x, float y, float z)
+    {
+        chicken.AddForce(x, y, z);
+    }
+
+    /*
+     * Checks which track the chicken is currently on and returns a boolean
+     * based on that
+     * 
+     * @return whether the chicken is on track one or not
+     */ 
     public bool OnTrackOne()
     {
         if (chicken.position.z == -3.0)
@@ -310,6 +326,12 @@ public class Chicken_Script : MonoBehaviour
         }
     }
 
+    /*
+     * Checks which track the chicken is currently on and returns a boolean
+     * based on that
+     * 
+     * @return whether the chicken is on track two or not
+     */
     public bool OnTrackTwo()
     {
         if (chicken.position.z == -5.0)

@@ -6,16 +6,18 @@ public class Game_Runner : MonoBehaviour
 {
     public int num_chickens;
 
-    // Start is called before the first frame update
     void Start()
     {
-        GameObject g = GameObject.Find("rudy");
+        GameObject g = GameObject.Find("rudy"); //the prefab for the 'rudy' chicken
         for (int i = 0; i < num_chickens; i++)
         {
-            GameObject c = GameObject.Instantiate(g);
-            c.name = "Chicken_" + i;
-
-            //float x_val = (i / (float)num_chickens * 5) - 5;
+            GameObject c = GameObject.Instantiate(g); //instatiates rudy
+            c.name = "Chicken_" + i; //names the chicken object based on its number
+            
+            /*
+             * places all of the chickens in random start locations in the game area, ensures they
+             * won't spawn in a location outside of view
+             */ 
             float y_val = Random.Range(1.0f, 4.0f);
             float z_val;
             float x_val;
@@ -32,15 +34,22 @@ public class Game_Runner : MonoBehaviour
             }
 
             c.GetComponent<Rigidbody>().transform.position = new Vector3(x_val, y_val, z_val);
-            //c.GetComponent<Rigidbody>().isKinematic = true;
         }
     }
 
+    /*
+     * Decrements the count of the number of chickens 
+     */ 
     public void Decrement_Num_Chickens()
     {
         num_chickens--;
     }
 
+    /*
+     * Returns the current count of the number of chickens
+     * 
+     * @return current chicken count
+     */ 
     public int Get_Num_Chickens()
     {
         return num_chickens;

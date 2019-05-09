@@ -14,9 +14,16 @@ public class Player_Script : MonoBehaviour
         player.isKinematic = true;
     }
 
+    /*
+     * called every frame
+     */ 
     private void Update()
     {
-
+        /*
+         * all of this code controls the movement of the player via the keyboard,
+         * eventually this will become irrelevant because the player will be controlled via
+         * the kinect user
+         */
         Vector3 position = this.transform.position;
 
         if (Input.GetKey(KeyCode.LeftArrow))
@@ -26,7 +33,6 @@ public class Player_Script : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            //Vector3 position = this.transform.position;
             position.x += 0.25f;
             this.transform.position = position;
         }
