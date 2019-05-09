@@ -38,7 +38,7 @@ public class Chicken_Script : MonoBehaviour
         chicken.useGravity = true;
         chicken.isKinematic = false;
 
-        max_velocity = 9.0f;
+        max_velocity = 10.0f;
         has_collided_with_player = false;
     }
 
@@ -199,12 +199,12 @@ public class Chicken_Script : MonoBehaviour
             //90% of the time, the chicken will bounce at a smaller interval, between 50 and 250
             if (bounce_rand <= 9)
             {
-                rand_y = Random.Range(50.0f, 250.0f);
+                rand_y = Random.Range(250.0f, 400.0f);
             }
             //10% of the time, the chicken will bounce at a larger interval, between 250 and 600
             else
             {
-                rand_y = Random.Range(250.0f, 600.0f);
+                rand_y = Random.Range(400.0f, 800.0f);
             }
 
             //50% of the time, the chicken will bounce to the right
