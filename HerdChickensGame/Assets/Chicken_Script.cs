@@ -3,6 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 public class Chicken_Script : MonoBehaviour
 {
+    //difficulty settings
+
+    /* ramp_num: the higher the number, the more likely the chicken will bounce to
+     * the henhouse (ex: 4 = 40% of the time)
+     */
+    public int ramp_num;
+    
+    /* chicken_switch_num: this is the minimum number of chickens left in the game 
+     * where switching to track two is allowed, when it is less than this, once a 
+     * chicken is on track one it will never go to track two again
+     */
+    public int chicken_switch_num;
+
     public Animation anim;
     public Animator animator;
     public Animation girl_anim;
@@ -166,7 +179,7 @@ public class Chicken_Script : MonoBehaviour
             if (OnTrackOne())
             {
                 //if there are more than 6 chickens it could switch 50% of the time
-                if (cur_num_chickens > 6 && rand <= 5)
+                if (cur_num_chickens > chicken_switch_num && rand <= 5)
                 {
                     //chicken switches to track two
                     chicken.transform.position = new Vector3(cur_x, cur_y, -5.0f);
@@ -226,8 +239,8 @@ public class Chicken_Script : MonoBehaviour
         {
             int rand_enter_num = RandomNum(); //random num for entering or not from 1 (inclusive) to 10 (inclusive)
 
-            //40% of the time, chicken will bounce toward the henhouse
-            if (rand_enter_num <= 4)
+            //chicken will bounce toward the henhouse based on the ramp_num
+            if (rand_enter_num <= ramp_num)
             {
                 Bounce(1800.0f, 750.0f, 0.0f);
             }
