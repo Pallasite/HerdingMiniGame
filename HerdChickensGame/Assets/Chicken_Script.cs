@@ -113,7 +113,7 @@ public class Chicken_Script : MonoBehaviour
     {
 
         //if the chicken collides with the player
-        if (collision.gameObject.name == "Player")
+        if (collision.gameObject.tag == "Player")
         {
             has_collided_with_player = true; //sets flag and allows chicken to enter henhouse
 
