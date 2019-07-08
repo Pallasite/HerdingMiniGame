@@ -10,15 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e6292b2c06870d4495f009f912b9600, type: 3}
-  m_Name: Post-process Volume Profile
+  m_Name: Post-process Volume Profile 1
   m_EditorClassIdentifier: 
   settings:
-  - {fileID: 114714695215582402}
-  - {fileID: 114371407281470774}
-  - {fileID: 114953033219245492}
-  - {fileID: 114123870821765446}
-  - {fileID: 114510786055662516}
---- !u!114 &114123870821765446
+  - {fileID: 114840583355721498}
+  - {fileID: 114459804144669758}
+  - {fileID: 114551764137831964}
+--- !u!114 &114459804144669758
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1329,7 +1327,7 @@ MonoBehaviour:
       - 0.5
       - 0.5
       - 0.5
---- !u!114 &114371407281470774
+--- !u!114 &114551764137831964
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1338,89 +1336,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48a79b01ea5641d4aa6daa2e23605641, type: 3}
-  m_Name: Bloom
+  m_Script: {fileID: 11500000, guid: b94fcd11afffcb142908bfcb1e261fba, type: 3}
+  m_Name: MotionBlur
   m_EditorClassIdentifier: 
   active: 1
   enabled:
     overrideState: 1
     value: 1
-  intensity:
+  shutterAngle:
     overrideState: 0
-    value: 0
-  threshold:
+    value: 270
+  sampleCount:
     overrideState: 0
-    value: 1
-  softKnee:
-    overrideState: 0
-    value: 0.5
-  clamp:
-    overrideState: 0
-    value: 65472
-  diffusion:
-    overrideState: 0
-    value: 7
-  anamorphicRatio:
-    overrideState: 0
-    value: 0
-  color:
-    overrideState: 0
-    value: {r: 1, g: 1, b: 1, a: 1}
-  fastMode:
-    overrideState: 0
-    value: 0
-  dirtTexture:
-    overrideState: 0
-    value: {fileID: 0}
-    defaultState: 1
-  dirtIntensity:
-    overrideState: 0
-    value: 0
---- !u!114 &114510786055662516
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40b924e2dad56384a8df2a1e111bb675, type: 3}
-  m_Name: Vignette
-  m_EditorClassIdentifier: 
-  active: 1
-  enabled:
-    overrideState: 1
-    value: 1
-  mode:
-    overrideState: 1
-    value: 0
-  color:
-    overrideState: 1
-    value: {r: 0.9732331, g: 0.5518868, b: 1, a: 1}
-  center:
-    overrideState: 0
-    value: {x: 0.5, y: 0.5}
-  intensity:
-    overrideState: 1
-    value: 0.277
-  smoothness:
-    overrideState: 0
-    value: 0.2
-  roundness:
-    overrideState: 0
-    value: 1
-  rounded:
-    overrideState: 0
-    value: 0
-  mask:
-    overrideState: 0
-    value: {fileID: 0}
-    defaultState: 1
-  opacity:
-    overrideState: 0
-    value: 1
---- !u!114 &114714695215582402
+    value: 10
+--- !u!114 &114840583355721498
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1437,11 +1366,11 @@ MonoBehaviour:
     overrideState: 1
     value: 1
   mode:
-    overrideState: 1
+    overrideState: 0
     value: 1
   intensity:
-    overrideState: 1
-    value: 0.6
+    overrideState: 0
+    value: 0
   color:
     overrideState: 0
     value: {r: 0, g: 0, b: 0, a: 1}
@@ -1469,31 +1398,3 @@ MonoBehaviour:
   quality:
     overrideState: 0
     value: 2
---- !u!114 &114953033219245492
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 556797029e73b2347956b6579e77e05b, type: 3}
-  m_Name: DepthOfField
-  m_EditorClassIdentifier: 
-  active: 0
-  enabled:
-    overrideState: 1
-    value: 1
-  focusDistance:
-    overrideState: 1
-    value: 0.1
-  aperture:
-    overrideState: 1
-    value: 32
-  focalLength:
-    overrideState: 1
-    value: 10
-  kernelSize:
-    overrideState: 0
-    value: 1
