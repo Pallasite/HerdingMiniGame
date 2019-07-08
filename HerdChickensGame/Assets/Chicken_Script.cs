@@ -302,7 +302,7 @@ public class Chicken_Script : MonoBehaviour
         animator.SetBool("cheer_bool", false);
         animator.SetBool("pokpok_bool", false);
         animator.SetBool("gethit_bool", false);
-        animator.SetBool("dizzy_bool", false);
+        //animator.SetBool("dizzy_bool", false);
         animator.SetBool("walk_bool", false);
 
         return;

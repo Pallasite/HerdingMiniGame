@@ -138,6 +138,9 @@ public class KinectBodyUDP : MonoBehaviour
                 jointObjs[i].GetComponent<Collider>().enabled = EnableCollisions;
                 jointObjs[i].transform.parent = this.transform;
                 jointObjs[i].tag = "Player";
+
+                
+
                 //SphereCollider sc = jointObjs[i].AddComponent<SphereCollider>();
                 //Rigidbody rb = jointObjs[i].AddComponent<Rigidbody>();
 
