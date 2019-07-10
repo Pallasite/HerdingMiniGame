@@ -6,18 +6,28 @@ public class Game_Runner : MonoBehaviour
 {
     public int num_chickens;
 
-    void Start()
+
+    void DestroyChickens()
+    {
+        for (int i=0; i<this.transform.childCount; i++)
+        {
+            Destroy(this.transform.GetChild(i).gameObject);
+        }
+    }
+
+    void CreateChickens()
     {
         GameObject g = GameObject.Find("rudy"); //the prefab for the 'rudy' chicken
         for (int i = 0; i < num_chickens; i++)
         {
             GameObject c = GameObject.Instantiate(g); //instatiates rudy
             c.name = "Chicken_" + i; //names the chicken object based on its number
-            
+            c.transform.parent = this.transform;
+
             /*
              * places all of the chickens in random start locations in the game area, ensures they
              * won't spawn in a location outside of view
-             */ 
+             */
             float y_val = Random.Range(1.0f, 4.0f);
             float z_val;
             float x_val;
@@ -29,22 +39,37 @@ public class Game_Runner : MonoBehaviour
             }
             else
             {
-                z_val = -5.0f;
+                z_val = -3.0f;
                 x_val = Random.Range(-8.0f, 5.0f);
             }
 
             c.GetComponent<Rigidbody>().transform.position = new Vector3(x_val, y_val, z_val);
+        }
+
+    }
+
+    void Start()
+    {
+        CreateChickens();
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.R))
+        {
+            DestroyChickens();
+            CreateChickens();
         }
     }
 
     /*
      * Decrements the count of the number of chickens 
      */ 
-    public void Decrement_Num_Chickens()
+    /*public void Decrement_Num_Chickens()
     {
         num_chickens--;
     }
-
+    */
     /*
      * Returns the current count of the number of chickens
      * 
@@ -52,6 +77,9 @@ public class Game_Runner : MonoBehaviour
      */ 
     public int Get_Num_Chickens()
     {
-        return num_chickens;
+        //return num_chickens;
+        Debug.Log(this.transform.childCount);
+
+       return this.transform.childCount;
     }
 }
