@@ -248,7 +248,8 @@ public class KinectBodyUDP : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.Log(e.ToString());
+            Debug.Log("Create Error: " + e.ToString());
+
         }
         remoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
         // start the thread for receiving signals
@@ -333,22 +334,32 @@ public class KinectBodyUDP : MonoBehaviour
         {
             //Debug.Log ("Threading inside while");
             // NOTE!: This blocks execution until a new message is received
-            Byte[] receivedBytes = receivingUdpClient.Receive(ref remoteIpEndPoint);
-
-            int offset = 0;
-            int bodyNum = 0;
-
-            while (offset < receivedBytes.Length)
+            try
             {
-                
-                offset = KinectBodyContainers[bodyNum].fillData(receivedBytes, offset);
-                bodyNum++;
+                Byte[] receivedBytes = receivingUdpClient.Receive(ref remoteIpEndPoint);
 
-                if (bodyNum >= MaxNumPlayers)
-                    break;
+                int offset = 0;
+                int bodyNum = 0;
+
+                while (offset < receivedBytes.Length)
+                {
+
+                    offset = KinectBodyContainers[bodyNum].fillData(receivedBytes, offset);
+                    bodyNum++;
+
+                    if (bodyNum >= MaxNumPlayers)
+                        break;
+
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.Log("Rec Error: " + e.ToString());
+                //maybe we exit here
+                exit = true;
 
             }
-            
+
             Thread.Sleep(0);
         }
     }
