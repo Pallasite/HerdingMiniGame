@@ -107,6 +107,14 @@ public class Chicken_Script : MonoBehaviour
                 Bounce(100.0f, 50.0f, 0.0f);
             }
         }
+
+        //make sure the chickens aren't stuck 
+       // if (chicken.position.y > 20)
+       if (this.name != "rudy" && !game_runner_script.isInBounds(chicken.position))
+        {
+            chicken.position =  new Vector3(0, 15, chicken.position.z);
+            chicken.velocity = new Vector3(0, 0, 0);
+        }
     }
 
     /*
