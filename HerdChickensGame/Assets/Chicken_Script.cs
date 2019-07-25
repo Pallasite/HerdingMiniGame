@@ -34,6 +34,8 @@ public class Chicken_Script : MonoBehaviour
     public Girl_Script girl_script;
     public Game_Runner game_runner_script;
 
+    public bool onTrack1;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -53,6 +55,7 @@ public class Chicken_Script : MonoBehaviour
 
         max_velocity = 10.0f;
         has_collided_with_player = false;
+        onTrack1 = true;
     }
 
     /*
@@ -104,6 +107,14 @@ public class Chicken_Script : MonoBehaviour
                 Bounce(100.0f, 50.0f, 0.0f);
             }
         }
+
+        //make sure the chickens aren't stuck 
+       // if (chicken.position.y > 20)
+       if (this.name != "rudy" && !game_runner_script.isInBounds(chicken.position))
+        {
+            chicken.position =  new Vector3(0, 15, chicken.position.z);
+            chicken.velocity = new Vector3(0, 0, 0);
+        }
     }
 
     /*
@@ -132,7 +143,7 @@ public class Chicken_Script : MonoBehaviour
         }
 
         //if the chicken collides with the grass
-        if (collision.gameObject.name == "Grass")
+        if ((collision.gameObject.name == "Grass") || (collision.gameObject.tag == "Player"))
         {
             /*
              * chickens move between track one and track two randomly upon colliding with the ground, and 
@@ -161,13 +172,14 @@ public class Chicken_Script : MonoBehaviour
              * if chicken is on track two and is not further right than where the ramp starts,
              * this ensures that the chicken will not switch to track two and then get stuck under the ramp
              */
-            if (OnTrackTwo() && cur_x <= 3.0f)
+            if (OnTrackTwo())// && cur_x <= 3.0f)
             {
                 //if there are fewer than 6 chicekns it will go to track one, otherwise 50% of the time chicken will switch
                 if (cur_num_chickens < 6 || rand <= 5)
                 {
                     //chicken switches to track one
-                    chicken.transform.position = new Vector3(cur_x, cur_y, -3.0f);
+                    // chicken.transform.position = new Vector3(cur_x, cur_y, -3.0f);
+                    onTrack1=true;
                 }
             }
 
@@ -179,10 +191,11 @@ public class Chicken_Script : MonoBehaviour
             if (OnTrackOne())
             {
                 //if there are more than 6 chickens it could switch 50% of the time
-                if (cur_num_chickens > chicken_switch_num && rand <= 5)
+                if (cur_num_chickens > chicken_switch_num && rand <= 1)
                 {
                     //chicken switches to track two
-                    chicken.transform.position = new Vector3(cur_x, cur_y, -5.0f);
+                    //chicken.transform.position = new Vector3(cur_x, cur_y, -5.0f);
+                    onTrack1 = false;
                 }
 
             }
@@ -237,6 +250,7 @@ public class Chicken_Script : MonoBehaviour
         //if the chicken collides with the ramp
         if (collision.gameObject.name == "Ramp")
         {
+           // Debug.Log("here");
             int rand_enter_num = RandomNum(); //random num for entering or not from 1 (inclusive) to 10 (inclusive)
 
             //chicken will bounce toward the henhouse based on the ramp_num
@@ -252,7 +266,7 @@ public class Chicken_Script : MonoBehaviour
         }
 
         //if the chicken collides with the henhouse
-        if (collision.gameObject.name == "Henhouse" && OnTrackOne())
+        if (collision.gameObject.tag == "Henhouse" && OnTrackOne())
         {
             /*
              * only if the chicken has collided with the player already is is able to enter the henhouse
@@ -265,7 +279,7 @@ public class Chicken_Script : MonoBehaviour
                 Destroy(this.gameObject);
 
                 //decrements the number of chickens in scene
-                game_runner_script.Decrement_Num_Chickens();
+               // game_runner_script.Decrement_Num_Chickens();
 
                 //girl jumps in background unless the animation of her jumping is already currently playing
                 girl_anim["Girl_Happy_Jump"].speed = 2.5f;
@@ -329,6 +343,9 @@ public class Chicken_Script : MonoBehaviour
      */ 
     public bool OnTrackOne()
     {
+        //return true;
+        return onTrack1;
+        /*
         if (chicken.position.z == -3.0)
         {
             return true;
@@ -337,6 +354,7 @@ public class Chicken_Script : MonoBehaviour
         {
             return false;
         }
+        */
     }
 
     /*
@@ -347,6 +365,8 @@ public class Chicken_Script : MonoBehaviour
      */
     public bool OnTrackTwo()
     {
+        return !onTrack1;
+        /*
         if (chicken.position.z == -5.0)
         {
             return true;
@@ -355,5 +375,6 @@ public class Chicken_Script : MonoBehaviour
         {
             return false;
         }
+        */
     }
 }
