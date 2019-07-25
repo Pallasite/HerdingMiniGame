@@ -14,6 +14,9 @@ public class Game_Runner : MonoBehaviour
     public bool Pause = false;
     public float PanelShowDuration=5;
 
+    public Vector3 minBounds;
+    public Vector3 maxBounds;
+
 
     void DestroyChickens()
     {
@@ -123,8 +126,19 @@ public class Game_Runner : MonoBehaviour
     public int Get_Num_Chickens()
     {
         //return num_chickens;
-        Debug.Log(this.transform.childCount);
+       // Debug.Log(this.transform.childCount);
 
        return this.transform.childCount;
     }
+
+    public bool isInBounds(Vector3 p)
+    {
+        if ((p.x >= minBounds.x) && (p.y >= minBounds.y) && (p.z >= minBounds.z) &&
+            (p.x <= maxBounds.x) && (p.y <= maxBounds.y) && (p.z <= maxBounds.z))
+            return true;
+        else
+            return false;
+    }
 }
+
+

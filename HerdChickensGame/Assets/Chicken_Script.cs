@@ -108,8 +108,9 @@ public class Chicken_Script : MonoBehaviour
             }
         }
 
-        //make sure the chickens aren't stuck up high
-        if (chicken.position.y > 20)
+        //make sure the chickens aren't stuck 
+       // if (chicken.position.y > 20)
+       if (this.name != "rudy" && !game_runner_script.isInBounds(chicken.position))
         {
             chicken.position =  new Vector3(0, 15, chicken.position.z);
             chicken.velocity = new Vector3(0, 0, 0);
