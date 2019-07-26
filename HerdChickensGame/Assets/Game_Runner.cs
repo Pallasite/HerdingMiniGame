@@ -7,8 +7,6 @@ public class Game_Runner : MonoBehaviour
     public int num_chickens;
     public float time;
 
-<<<<<<< HEAD
-=======
     public GameObject FrontPanel;
 
     float panelTargetAlpha;
@@ -19,7 +17,6 @@ public class Game_Runner : MonoBehaviour
     public Vector3 minBounds;
     public Vector3 maxBounds;
 
->>>>>>> 94230c55da6f8b1e672b595a63623ef96e107726
 
     void DestroyChickens()
     {
@@ -29,8 +26,6 @@ public class Game_Runner : MonoBehaviour
         }
     }
 
-<<<<<<< HEAD
-=======
     void FadeFrontPanel()
     {
         Color c = FrontPanel.GetComponent<MeshRenderer>().material.color;
@@ -43,7 +38,6 @@ public class Game_Runner : MonoBehaviour
 
   
 
->>>>>>> 94230c55da6f8b1e672b595a63623ef96e107726
     void CreateChickens()
     {
         GameObject g = GameObject.Find("rudy"); //the prefab for the 'rudy' chicken
@@ -57,11 +51,7 @@ public class Game_Runner : MonoBehaviour
              * places all of the chickens in random start locations in the game area, ensures they
              * won't spawn in a location outside of view
              */
-<<<<<<< HEAD
-            float y_val = Random.Range(1.0f, 4.0f);
-=======
             float y_val = Random.Range(10.0f, 14.0f);
->>>>>>> 94230c55da6f8b1e672b595a63623ef96e107726
             float z_val;
             float x_val;
 
@@ -79,52 +69,15 @@ public class Game_Runner : MonoBehaviour
             c.GetComponent<Rigidbody>().transform.position = new Vector3(x_val, y_val, z_val);
         }
 
-<<<<<<< HEAD
-    }
-
-    void Start()
-    {
-        CreateChickens();
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyUp(KeyCode.R))
-        {
-            DestroyChickens();
-            CreateChickens();
-        }
-    }
-
-    /*
-     * Decrements the count of the number of chickens 
-     */ 
-    /*public void Decrement_Num_Chickens()
-=======
     }
 
     private void Reset()
->>>>>>> 94230c55da6f8b1e672b595a63623ef96e107726
     {
         Pause = false;
         panelTargetAlpha = 0;
         DestroyChickens();
         CreateChickens();
     }
-<<<<<<< HEAD
-    */
-    /*
-     * Returns the current count of the number of chickens
-     * 
-     * @return current chicken count
-     */ 
-    public int Get_Num_Chickens()
-    {
-        //return num_chickens;
-        Debug.Log(this.transform.childCount);
-
-       return this.transform.childCount;
-=======
 
     void Start()
     {
@@ -185,7 +138,6 @@ public class Game_Runner : MonoBehaviour
             return true;
         else
             return false;
->>>>>>> 94230c55da6f8b1e672b595a63623ef96e107726
     }
 }
 
